@@ -50,6 +50,8 @@ __global__ void SAFT
 		const int yStopIdx = ((yIm + yConsider) >= nY) ? nY - 1 : yIm + yConsider;
 		const int xStopIdx = ((xIm + xConsider) >= nX) ? nX - 1 : xIm + xConsider;
 
+		int nElem = 0;
+
 		#pragma unroll
 		for (int iY = yStartIdx; iY <= yStopIdx; iY++) // run over all other a scans in y
 		{
@@ -73,6 +75,7 @@ __global__ void SAFT
 						const int dataIdx = tIdx + nT * (iX + nX * iY);
 						rfsaft += inputVol[dataIdx];
 						rfsaftabs += fabsf(inputVol[dataIdx]);
+						nElem++;
 					} 
 				}
 			}
@@ -80,7 +83,8 @@ __global__ void SAFT
 
 		if (rfsaftabs > 0)
 		{
-			const float cf = rfsaft * rfsaft / (rfsaftabs * rfsaftabs);
+			const float cf = rfsaft * rfsaft / 
+				(rfsaftabs * rfsaftabs * ((float) nElem));
 			outputVol[zIm + nT * (xIm + nX * yIm)] = signMultip * rfsaft * cf;
 			
 			// if (zDepth > fd)
