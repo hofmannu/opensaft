@@ -10,6 +10,10 @@ This repository contains an implementation of the synthetic aperture focsuing te
 *  Fully open source and free of charge
 *  CUDA accelerated reconstruction procedure
 
+## Planned features
+*  Bandpass filtering directly within GUI and separate reconstruction into different normalized frequency bands as done in RSOM processing software
+*  Implementation of US pulse echo kernel
+
 ## Limitations of the underlying model
 
 SAFT induces a strong absorption bias over depth. Absorbance "reconstructed" at different depths can therefore never be compared in a quantitative manner. It also tends to amplify low frequency signals which is the reason why most groups so far reconstruct different freqeucny bands independently (feature requires implementation). In planes very distant from the focus blurring is unavoidable due to the large shape of the reconstruction arcs.
