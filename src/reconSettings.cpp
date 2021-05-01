@@ -6,6 +6,12 @@ void reconSettings::set_sos(const float _sos)
 	return;
 }
 
+void reconSettings::set_flagUs(const bool _flagUs)
+{
+	flagUs = _flagUs;
+	return;
+}
+
 void reconSettings::set_cropTMin(const float tMin)
 {
 	cropMm[0] = tMin;
