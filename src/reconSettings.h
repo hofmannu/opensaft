@@ -16,17 +16,21 @@ private:
 	float sos = 1490; // speed of sound used [m/s]
 	bool flagCoherenceW = 0; // should we use coherence factor weighting
 	bool flagSensW = 0; // should we also weight by sensitivity field
+	bool flagPulseEcho = 0; // set to 1 for pulse echo, to 0 for optoacoustic
 	float cropMm[6] = {0, 0, 0, 0, 0, 0	}; // crop applied in all three dimensions prior reconstruction
 	float rMin = 50e-6; // minimum radius allowed for reconstruction arcs (overwrites angle values)
-
 	bool unsused = 1;
 public:
 	float* get_psos() {return &sos;};
 	float get_sos() const {return sos;};
 	void set_sos(const float _sos);
 
+	// flag for different logical settings
 	bool* get_pflagCoherenceW() {return &flagCoherenceW;};
 	bool* get_pflagSensW() {return &flagSensW;};
+	bool* get_pflagPulseEcho() {return &flagPulseEcho;};
+	bool get_flagPulseEcho() const {return flagPulseEcho;};
+	void set_flagPulseEcho(const bool _flagPulseEcho) {flagPulseEcho = _flagPulseEcho; return;};
 
 	// defining and getting cropping
 	float get_cropTMin() const {return cropMm[0];};

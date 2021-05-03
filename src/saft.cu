@@ -63,7 +63,7 @@ __global__ void SAFT
 				const float rDist = sqrtf(xRel * xRel + yRel * yRel);
 				const float currRatio = rDist / fabsf(deltaZ);
 
-				if (currRatio <= critRatio)
+				if ((currRatio <= critRatio) || (rDist < rMin))
 				{
 					// calculate distance, delay time, and index
 					const float distTot = sqrtf(rDist * rDist + deltaZ * deltaZ);
