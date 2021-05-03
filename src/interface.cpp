@@ -113,11 +113,11 @@ void interface::TransducerWindow()
 
 	ImGui::Columns(1);
 	ImGui::InputFloat("Focal distance [mm]", trans->get_pfocalDistance());
+	ImGui::SameLine(); HelpMarker("Curvature radius of sensitive element, defines z level of focal plane");
 	ImGui::InputFloat("Aperture radius [mm]", trans->get_prAperture());
+	ImGui::SameLine(); HelpMarker("Used to define the size of the cone where we reconstruct");
 	ImGui::InputFloat("Hole radius [mm]", trans->get_rHole());
-
 	ImGui::End();
-
 
 	return;
 }
@@ -134,18 +134,23 @@ void interface::SettingsWindow()
 	sett->set_crop(0, tCropMicro[0] * 1e-3, tCropMicro[1] * 1e-3); // store as ms
 	ImGui::InputFloat2("x cropping [mm]", sett->get_pcropX());
 	ImGui::InputFloat2("y cropping [mm]", sett->get_pcropY());
-
-	ImGui::InputFloat("Speed of sound [m/s]", sett->get_psos());
-	ImGui::Checkbox("Coherence factor weighting", sett->get_pflagCoherenceW());
-	ImGui::Checkbox("Sensitivity field weighting", sett->get_pflagSensW());
-
 	float rMinMm = sett->get_rMin() * 1e3;
-	ImGui::InputFloat("Minimum reconstruction radius [mm]", &rMinMm);
+	ImGui::InputFloat("min. r_recon [mm]", &rMinMm);
 	sett->set_rMin(rMinMm * 1e-3);
+	ImGui::SameLine(); HelpMarker("This defines the lower limit which for the radius of the used arcs. Usually this value should be close to the expected diffraction limit");
+	ImGui::InputFloat("speed of sound [m/s]", sett->get_psos());
+	ImGui::Checkbox("coherence factor weighting", sett->get_pflagCoherenceW());
+	ImGui::SameLine(); HelpMarker("If this option is enabled, each reconstructed voxel will be weighted by the wave coherence. Can improve resolution and SNR.");
+	ImGui::Checkbox("sensitivity field weighting", sett->get_pflagSensW());
+	ImGui::Checkbox("pulse-echo mode", sett->get_pflagUs());
+	ImGui::SameLine(); HelpMarker("While this program was originally developed to be used for OA image reconstruction it can also be applied to US pulse echo measurements");
+	ImGui::Checkbox("GPU", sett->get_pflagGpu());
+	ImGui::SameLine(); HelpMarker("Defines if we want to run the code on CPU or GPU"); 
 
 	ImGui::End();
 }
 
+// interfacing window to conveniently load data from h5 files
 void interface::DataLoaderWindow()
 {
 	ImGui::Begin("Data Loader", &show_data_loader);
@@ -163,7 +168,7 @@ void interface::DataLoaderWindow()
 			std::string inputFilePath = ImGuiFileDialog::Instance()->GetFilepathName();
 			inputDataVol->readFromFile(inputFilePath);
 			inputDataVol->calcMinMax();
-			isDataSetDefined = 1;
+			isDataSetDefined = 1; // set flag to data loaded
 			
 			// after data loading, update the cropping values 
 			for (uint8_t iDim = 0; iDim < 3; iDim++)
@@ -256,7 +261,8 @@ void interface::DataLoaderWindow()
 
 void interface::ImImagesc(
 	const float* data, const uint64_t sizex, const uint64_t sizey, 
-	GLuint* out_texture, const color_mapper myCMap){
+	GLuint* out_texture, const color_mapper myCMap)
+{
 	
 	glDeleteTextures(1, out_texture);
 
@@ -285,6 +291,12 @@ void interface::ReconWindow()
 {
 	ImGui::Begin("Reconstruction", &show_recon_window);
 
+	if (!isDataSetDefined)
+	{
+		ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+	}
+
 	if (ImGui::Button("Reconstruct"))
 	{
 		printf("Starting reconstruction procedure...\n");
@@ -292,6 +304,12 @@ void interface::ReconWindow()
 		isReconDone = 1;
 		printf("Finished reconstruction procedure!\n");
 	}         
+
+	if (!isDataSetDefined)
+	{
+		ImGui::PopItemFlag();
+    ImGui::PopStyleVar();
+	}
 
 	if (isReconDone)
 	{

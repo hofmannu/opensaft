@@ -1,5 +1,5 @@
 /* 
-	syntehtic aperture focusing technique
+	synthetic aperture focusing technique
 
 	reconstruction procedure
 
@@ -38,6 +38,7 @@ public:
 	volume* get_pcroppedData() {return & croppedData;};
 
 	void recon();
+	void saft_cpu(); // cpu version of the kernel, used for debugging and if no GPU present
 	void crop();
 };
 
