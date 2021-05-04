@@ -170,7 +170,7 @@ void saft::saft_cpu()
 	const float dt = croppedData.get_res(0);
 	const float dx = croppedData.get_res(1);
 	const float dy = croppedData.get_res(2);
-	const float c0 = sett.get_sos();
+	const float c0 = sett.get_flagUs() ? sett.get_sos() : sett.get_sos() * 0.5;
 	const float fd = trans.get_focalDistance() * 1e-3;
 
 	float* outputVol = reconData.get_pdata();
@@ -273,10 +273,13 @@ void saft::recon()
 		reconData.set_res(iDim, croppedData.get_res(iDim));
 		reconData.set_origin(iDim, croppedData.get_origin(iDim));
 	}
-	reconData.set_res(0, croppedData.get_res(0) * sett.get_sos());
+	const float dz = sett.get_flagUs() ? croppedData.get_res(0) * sett.get_sos() / 2 :
+		croppedData.get_res(0) * sett.get_sos();
+	reconData.set_res(0, dz);
 	reconData.set_origin(0, croppedData.get_origin(0) * sett.get_sos());
 	
 	reconData.alloc_memory();
+	clock_t startTime = clock();
 
 	if (sett.get_flagGpu())
 	{
@@ -324,7 +327,7 @@ void saft::recon()
 		const float critRatio = trans.get_rAperture() / deltaZT; 
 
 		// if the dataset is ultrasound pulse echo measurement, just multiply sos with 0.5
-		const float reconSos = sett.get_flagUs() ? sett.get_sos() : sett.get_sos() * 0.5;
+		const float reconSos = sett.get_flagUs() ? sett.get_sos() : (sett.get_sos() * 0.5);
 
 		// execute actual kernel
 		// all in SI units!
@@ -362,6 +365,9 @@ void saft::recon()
 	{
 		saft_cpu();
 	}
+
+	clock_t endTime = clock();
+	reconTime = (endTime - startTime) / ((double) CLOCKS_PER_SEC);
 
 	// calculate minimum and maximum value in reconstructed volume
 	reconData.calcMinMax();

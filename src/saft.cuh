@@ -29,7 +29,7 @@ private:
 	volume preprocData; // preprocessed datasets
 	volume reconData; // reconstructed datasets
 	volume croppedData; // cropped dataset
-	
+	double reconTime = 0; // time required for last reconstruction	
 public:
 	transducer* get_ptrans() {return &trans;};
 	reconSettings* get_psett() {return &sett;};
@@ -40,6 +40,8 @@ public:
 	void recon();
 	void saft_cpu(); // cpu version of the kernel, used for debugging and if no GPU present
 	void crop();
+
+	double get_reconTime() const {return reconTime;};
 };
 
 #endif

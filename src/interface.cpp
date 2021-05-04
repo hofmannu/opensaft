@@ -313,6 +313,7 @@ void interface::ReconWindow()
 
 	if (isReconDone)
 	{
+		ImGui::Text("Last reconstruction took %f seconds.", recon.get_reconTime());
 		if (ImGui::CollapsingHeader("Reconstruction preview"))
 		{
 			ImGui::SliderInt("zLayer", &currSliceZRecon, 0, reconDataVol->get_dim(0) - 1);
