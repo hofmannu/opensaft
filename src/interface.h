@@ -49,6 +49,10 @@ private:
 	GLuint reconDataTexture;
 	GLuint reconDataTextureSlice;
 
+	GLuint reconMipZ;
+	GLuint reconMipY;
+	color_mapper mipMapper;
+
 	void MainDisplayCode();
 
 	void TransducerWindow(); // used to define transdcuer properties

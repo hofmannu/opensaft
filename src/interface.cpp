@@ -183,75 +183,82 @@ void interface::DataLoaderWindow()
 
 	if (isDataSetDefined)
 	{
-		ImGui::Columns(2);	
-		// print information about dataset if defined
-		ImGui::Text("Size"); ImGui::NextColumn();
-		
-		ImGui::Text("%i x %i x %i", 
-			inputDataVol->get_dim(0), 
-			inputDataVol->get_dim(1), 
-			inputDataVol->get_dim(2)); 
-		ImGui::NextColumn();
+		if (ImGui::CollapsingHeader("Data information"))
+		{
+			ImGui::Columns(2);	
+			// print information about dataset if defined
+			ImGui::Text("Size"); ImGui::NextColumn();
+			
+			ImGui::Text("%i x %i x %i", 
+				inputDataVol->get_dim(0), 
+				inputDataVol->get_dim(1), 
+				inputDataVol->get_dim(2)); 
+			ImGui::NextColumn();
 
-		ImGui::Text("Resolution [microm]"); ImGui::NextColumn();
-		ImGui::Text("%.2f x %.2f", 
-			inputDataVol->get_res(1) * 1e6, 
-			inputDataVol->get_res(2) * 1e6);
-		ImGui::NextColumn();
-		
-		ImGui::Text("Sampling freqeucny [MHz]"); ImGui::NextColumn();
-		ImGui::Text("%.2f",	1 / inputDataVol->get_res(0) / 1e6);
-		ImGui::NextColumn();
+			ImGui::Text("Resolution [microm]"); ImGui::NextColumn();
+			ImGui::Text("%.2f x %.2f", 
+				inputDataVol->get_res(1) * 1e6, 
+				inputDataVol->get_res(2) * 1e6);
+			ImGui::NextColumn();
+			
+			ImGui::Text("Sampling freqeucny [MHz]"); ImGui::NextColumn();
+			ImGui::Text("%.2f",	1 / inputDataVol->get_res(0) / 1e6);
+			ImGui::NextColumn();
 
-		ImGui::Text("t range [micros]"); ImGui::NextColumn();
-		ImGui::Text("%.2f ... %.2f", 
-			inputDataVol->get_minPos(0) * 1e6, 
-			inputDataVol->get_maxPos(0) * 1e6);
-		ImGui::NextColumn();
+			ImGui::Text("t range [micros]"); ImGui::NextColumn();
+			ImGui::Text("%.2f ... %.2f", 
+				inputDataVol->get_minPos(0) * 1e6, 
+				inputDataVol->get_maxPos(0) * 1e6);
+			ImGui::NextColumn();
 
-		ImGui::Text("x range [mm]"); ImGui::NextColumn();
-		ImGui::Text("%.2f ... %.2f", 
-			inputDataVol->get_minPos(1) * 1e3, 
-			inputDataVol->get_maxPos(1) * 1e3);
-		ImGui::NextColumn();
+			ImGui::Text("x range [mm]"); ImGui::NextColumn();
+			ImGui::Text("%.2f ... %.2f", 
+				inputDataVol->get_minPos(1) * 1e3, 
+				inputDataVol->get_maxPos(1) * 1e3);
+			ImGui::NextColumn();
 
-		ImGui::Text("y range [mm]"); ImGui::NextColumn();
-		ImGui::Text("%.2f ... %.2f", 
-			inputDataVol->get_minPos(2) * 1e3, 
-			inputDataVol->get_maxPos(2) * 1e3);
-		ImGui::NextColumn();
+			ImGui::Text("y range [mm]"); ImGui::NextColumn();
+			ImGui::Text("%.2f ... %.2f", 
+				inputDataVol->get_minPos(2) * 1e3, 
+				inputDataVol->get_maxPos(2) * 1e3);
+			ImGui::NextColumn();
 
-		ImGui::Text("Maximum value"); ImGui::NextColumn();
-		ImGui::Text("%f", inputDataVol->getMinVal());
-		ImGui::NextColumn();
+			ImGui::Text("Maximum value"); ImGui::NextColumn();
+			ImGui::Text("%f", inputDataVol->getMinVal());
+			ImGui::NextColumn();
 
-		ImGui::Text("Minimum value"); ImGui::NextColumn();
-		ImGui::Text("%f", inputDataVol->getMaxVal());
-		ImGui::NextColumn();
-		
-		ImGui::Columns(1);
-		ImGui::SliderInt("zLayer", &currSliceZ, 0, inputDataVol->get_dim(0) - 1);
-		float tSlice = inputDataVol->get_pos(currSliceZ, 0);
-		ImGui::Text("Time of current layer: %f micros", tSlice * 1e6);
-		ImGui::Text("Approximated z layer: %f mm", tSlice * sett->get_sos());
-		ImImagesc(inputDataVol->get_psliceZ((uint64_t) currSliceZ),
-			inputDataVol->get_dim(1), inputDataVol->get_dim(2), &inDataTexture, inDataMapper);
-		
-		int width = 550;
-		int height = (float) width / inputDataVol->get_length(1) * inputDataVol->get_length(2);
-		ImGui::Image((void*)(intptr_t)inDataTexture, ImVec2(width, height));
-		
-		ImGui::SliderInt("yLayer", &currSliceY, 0, inputDataVol->get_dim(2) - 1);
+			ImGui::Text("Minimum value"); ImGui::NextColumn();
+			ImGui::Text("%f", inputDataVol->getMaxVal());
+			ImGui::NextColumn();
+			ImGui::Columns(1);
+		}
 
-		ImImagesc(inputDataVol->get_psliceY((uint64_t) currSliceY),
-		 	inputDataVol->get_dim(1), inputDataVol->get_dim(0), &inDataTextureSlice, inDataMapper);
-		height = (float) width / inputDataVol->get_length(1) * inputDataVol->get_length(0) * sett->get_sos();
-		ImGui::Image((void*)(intptr_t)inDataTextureSlice, ImVec2(width, height));
-		
-		ImGui::SliderFloat("MinVal", inDataMapper.get_pminVal(), inputDataVol->get_minVal(), inputDataVol->get_maxVal(), "%.1f");
-		ImGui::SliderFloat("MaxVal", inDataMapper.get_pmaxVal(), inputDataVol->get_minVal(), inputDataVol->get_maxVal(), "%.1f");
-		ImGui::ColorEdit4("Min color", inDataMapper.get_pminCol(), ImGuiColorEditFlags_Float);
-		ImGui::ColorEdit4("Max color", inDataMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
+		if (ImGui::CollapsingHeader("Raw Data slicer"))
+		{
+			ImGui::SliderInt("zLayer", &currSliceZ, 0, inputDataVol->get_dim(0) - 1);
+			float tSlice = inputDataVol->get_pos(currSliceZ, 0);
+			ImGui::Text("Time of current layer: %f micros", tSlice * 1e6);
+			ImGui::Text("Approximated z layer: %f mm", tSlice * sett->get_sos());
+			ImImagesc(inputDataVol->get_psliceZ((uint64_t) currSliceZ),
+				inputDataVol->get_dim(1), inputDataVol->get_dim(2), &inDataTexture, inDataMapper);
+			
+			int width = 550;
+			int height = (float) width / inputDataVol->get_length(1) * inputDataVol->get_length(2);
+			ImGui::Image((void*)(intptr_t)inDataTexture, ImVec2(width, height));
+			
+			ImGui::SliderInt("yLayer", &currSliceY, 0, inputDataVol->get_dim(2) - 1);
+
+			ImImagesc(inputDataVol->get_psliceY((uint64_t) currSliceY),
+			 	inputDataVol->get_dim(1), inputDataVol->get_dim(0), &inDataTextureSlice, inDataMapper);
+			height = (float) width / inputDataVol->get_length(1) * inputDataVol->get_length(0) * sett->get_sos();
+			ImGui::Image((void*)(intptr_t)inDataTextureSlice, ImVec2(width, height));
+			
+			ImGui::SliderFloat("MinVal", inDataMapper.get_pminVal(), inputDataVol->get_minVal(), inputDataVol->get_maxVal(), "%.1f");
+			ImGui::SliderFloat("MaxVal", inDataMapper.get_pmaxVal(), inputDataVol->get_minVal(), inputDataVol->get_maxVal(), "%.1f");
+			ImGui::ColorEdit4("Min color", inDataMapper.get_pminCol(), ImGuiColorEditFlags_Float);
+			ImGui::ColorEdit4("Max color", inDataMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
+		}
+				
 	}
 
 	ImGui::End();
@@ -314,7 +321,29 @@ void interface::ReconWindow()
 	if (isReconDone)
 	{
 		ImGui::Text("Last reconstruction took %f seconds.", recon.get_reconTime());
-		if (ImGui::CollapsingHeader("Reconstruction preview"))
+		if (ImGui::CollapsingHeader("MIP preview"))
+		{
+			const int width = 550;
+			const int height = (float) width / reconDataVol->get_length(1) * 
+				reconDataVol->get_length(2);
+
+			ImImagesc(reconDataVol->get_mipZ(),	reconDataVol->get_dim(1), 
+				reconDataVol->get_dim(2), &reconMipZ, mipMapper);
+			ImGui::Image((void*)(intptr_t)reconMipZ, ImVec2(width, height));
+
+			ImImagesc(reconDataVol->get_mipY(), reconDataVol->get_dim(1), 
+				reconDataVol->get_dim(0), &reconMipY, mipMapper);
+			const int height2 = (float) width / reconDataVol->get_length(1) * reconDataVol->get_length(0);
+			ImGui::Image((void*)(intptr_t)reconMipY, ImVec2(width, height2));
+
+			ImGui::SliderFloat("MinVal", mipMapper.get_pminVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
+			ImGui::SliderFloat("MaxVal", mipMapper.get_pmaxVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
+			ImGui::ColorEdit4("Min color", mipMapper.get_pminCol(), ImGuiColorEditFlags_Float);
+			ImGui::ColorEdit4("Max color", mipMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
+		}
+
+		// slice preview through reconstruction
+		if (ImGui::CollapsingHeader("Reconstruction slicer"))
 		{
 			ImGui::SliderInt("zLayer", &currSliceZRecon, 0, reconDataVol->get_dim(0) - 1);
 			float tSlice = reconDataVol->get_pos(currSliceZRecon, 0);
@@ -323,16 +352,17 @@ void interface::ReconWindow()
 			ImImagesc(reconDataVol->get_psliceZ((uint64_t) currSliceZRecon),
 				reconDataVol->get_dim(1), reconDataVol->get_dim(2), &reconDataTexture, reconDataMapper);
 			
-			int width = 550;
-			int height = (float) width / reconDataVol->get_length(1) * reconDataVol->get_length(2);
+			const int width = 550;
+			const int height = (float) width / reconDataVol->get_length(1) * 
+				reconDataVol->get_length(2);
 			ImGui::Image((void*)(intptr_t)reconDataTexture, ImVec2(width, height));
 			
 			ImGui::SliderInt("yLayer", &currSliceYRecon, 0, reconDataVol->get_dim(2) - 1);
 
 			ImImagesc(reconDataVol->get_psliceY((uint64_t) currSliceYRecon),
 			 	reconDataVol->get_dim(1), reconDataVol->get_dim(0), &reconDataTextureSlice, reconDataMapper);
-			height = (float) width / reconDataVol->get_length(1) * reconDataVol->get_length(0);
-			ImGui::Image((void*)(intptr_t)reconDataTextureSlice, ImVec2(width, height));
+			const int height2 = (float) width / reconDataVol->get_length(1) * reconDataVol->get_length(0);
+			ImGui::Image((void*)(intptr_t)reconDataTextureSlice, ImVec2(width, height2));
 			
 			ImGui::SliderFloat("MinVal", reconDataMapper.get_pminVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
 			ImGui::SliderFloat("MaxVal", reconDataMapper.get_pmaxVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");

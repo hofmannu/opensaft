@@ -371,6 +371,7 @@ void saft::recon()
 
 	// calculate minimum and maximum value in reconstructed volume
 	reconData.calcMinMax();
+	reconData.calcMips();
 	return;
 
 }
