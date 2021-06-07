@@ -4,3 +4,6 @@
 [submodule "lib/CVolume"]
 	path = lib/CVolume
 	url = git@github.com:hofmannu/CVolume.git
+[submodule "lib/matio"]
+	path = lib/matio
+	url = https://github.com/tbeu/matio.git

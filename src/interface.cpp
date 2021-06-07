@@ -158,7 +158,7 @@ void interface::DataLoaderWindow()
 	if (ImGui::Button("Load data"))
 	{
 		ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", 
-			"Choose File", ".h5\0", ".");
+			"Choose File", ".h5\0.mat\0", ".");
 	}
 
 	if (ImGuiFileDialog::Instance()->FileDialog("ChooseFileDlgKey")) 
@@ -308,6 +308,18 @@ void interface::ReconWindow()
 	{
 		printf("Starting reconstruction procedure...\n");
 		recon.recon();
+
+		// if this is the first reconstruction we have done, update the cropping
+		if (isReconDone == 0)
+		{
+			zCrop[0] = reconDataVol->get_minPos(0);
+			zCrop[1] = reconDataVol->get_maxPos(0);
+			xCrop[0] = reconDataVol->get_minPos(1);
+			xCrop[1] = reconDataVol->get_maxPos(1);
+			yCrop[0] = reconDataVol->get_minPos(0);
+			yCrop[1] = reconDataVol->get_maxPos(1);
+		}
+
 		isReconDone = 1;
 		printf("Finished reconstruction procedure!\n");
 	}         
@@ -327,17 +339,22 @@ void interface::ReconWindow()
 			const int height = (float) width / reconDataVol->get_length(1) * 
 				reconDataVol->get_length(2);
 
-			ImImagesc(reconDataVol->get_mipZ(),	reconDataVol->get_dim(1), 
+			// read in users idea of z/x/y cropping
+			ImGui::InputFloat2("z crop", &zCrop[0]);
+			ImGui::InputFloat2("x crop", &xCrop[0]);
+			ImGui::InputFloat2("y crop", &yCrop[0]);
+
+			ImImagesc(reconDataVol->get_croppedMipZ(&zCrop[0]),	reconDataVol->get_dim(1), 
 				reconDataVol->get_dim(2), &reconMipZ, mipMapper);
 			ImGui::Image((void*)(intptr_t)reconMipZ, ImVec2(width, height));
 
-			ImImagesc(reconDataVol->get_mipY(), reconDataVol->get_dim(1), 
+			ImImagesc(reconDataVol->get_croppedMipY(&yCrop[0]), reconDataVol->get_dim(1), 
 				reconDataVol->get_dim(0), &reconMipY, mipMapper);
 			const int height2 = (float) width / reconDataVol->get_length(1) * reconDataVol->get_length(0);
 			ImGui::Image((void*)(intptr_t)reconMipY, ImVec2(width, height2));
 
-			ImGui::SliderFloat("MinVal", mipMapper.get_pminVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
-			ImGui::SliderFloat("MaxVal", mipMapper.get_pmaxVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
+			ImGui::SliderFloat("MinVal", mipMapper.get_pminVal(), reconDataVol->get_minValCrop(), reconDataVol->get_maxValCrop(), "%.1f");
+			ImGui::SliderFloat("MaxVal", mipMapper.get_pmaxVal(), reconDataVol->get_minValCrop(), reconDataVol->get_maxValCrop(), "%.1f");
 			ImGui::ColorEdit4("Min color", mipMapper.get_pminCol(), ImGuiColorEditFlags_Float);
 			ImGui::ColorEdit4("Max color", mipMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
 		}

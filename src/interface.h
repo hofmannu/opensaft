@@ -49,6 +49,11 @@ private:
 	GLuint reconDataTexture;
 	GLuint reconDataTextureSlice;
 
+	// cropping range which we apply to datasets
+	float zCrop[2] = {0, 1};
+	float xCrop[2] = {0, 1};
+	float yCrop[2] = {0, 1};
+
 	GLuint reconMipZ;
 	GLuint reconMipY;
 	color_mapper mipMapper;

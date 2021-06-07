@@ -97,8 +97,6 @@ __global__ void SAFT
 		{
 			outputVol[zIm + nT * (xIm + nX * yIm)] = 0;
 		}
-
-
 	}
 
 	return;
