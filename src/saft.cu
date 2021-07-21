@@ -36,7 +36,7 @@ __global__ void SAFT
 		const float zDepth = (t0 + dt * (float) zIm) * c0; // depth of reconstructed point 
 		
 		// 1 if far field, -1 if close field
-		const float signMultip = -1 + 2 * ((float) (zDepth >= fd));
+		const int signMultip = -1 + 2 * ((float) (zDepth >= fd));
 		
 		const float deltaZ = zDepth - fd; // z distance between focal point and reson point
 		float rfsaft = 0; // coherent saft sum
@@ -56,11 +56,11 @@ __global__ void SAFT
 		#pragma unroll
 		for (int iY = yStartIdx; iY <= yStopIdx; iY++) // run over all other a scans in y
 		{
-			const float yRel = dy * (float) (iY - yIm);  
+			const float yRel = dy * ((float) (iY - yIm));  
 			#pragma unroll
 			for (int iX = xStartIdx; iX <= xStopIdx; iX++) // run over all other a scans in x
 			{
-				const float xRel = dx * (float) (iX - xIm);
+				const float xRel = dx * ((float) (iX - xIm));
 				const float rDist = sqrtf(xRel * xRel + yRel * yRel);
 				const float currRatio = rDist / fabsf(deltaZ);
 
@@ -86,12 +86,8 @@ __global__ void SAFT
 		{
 			const float cf = flagCfWeight ? rfsaft * rfsaft / 
 				(rfsaftabs * rfsaftabs * ((float) nElem)) : 1;
-			outputVol[zIm + nT * (xIm + nX * yIm)] = signMultip * rfsaft * cf;
-			
-			// if (zDepth > fd)
-			// 	outputVol[zIm + nT * (xIm + nX * yIm)] = rfsaft * cf;
-			// else
-			// 	outputVol[zIm + nT * (xIm + nX * yIm)] = -rfsaft * cf;
+			outputVol[zIm + nT * (xIm + nX * yIm)] = ((float) signMultip) * rfsaft * cf;
+
 		}
 		else
 		{
