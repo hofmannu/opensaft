@@ -117,11 +117,14 @@ void interface::TransducerWindow()
 	ImGui::InputFloat("Aperture radius [mm]", trans->get_prAperture());
 	ImGui::SameLine(); HelpMarker("Used to define the size of the cone where we reconstruct");
 	ImGui::InputFloat("Hole radius [mm]", trans->get_rHole());
+	ImGui::SameLine(); HelpMarker("So far unused, lateron for sensnitivity field building.");
 	ImGui::End();
 
 	return;
 }
 
+
+// defining all the reconstruction settings
 void interface::SettingsWindow()
 {
 	ImGui::Begin("Reconstruction settings", &show_settings_window);
@@ -146,7 +149,6 @@ void interface::SettingsWindow()
 	ImGui::SameLine(); HelpMarker("While this program was originally developed to be used for OA image reconstruction it can also be applied to US pulse echo measurements");
 	ImGui::Checkbox("GPU", sett->get_pflagGpu());
 	ImGui::SameLine(); HelpMarker("Defines if we want to run the code on CPU or GPU"); 
-
 	ImGui::End();
 }
 
@@ -176,6 +178,13 @@ void interface::DataLoaderWindow()
 				sett->set_crop(iDim, 
 					inputDataVol->get_minPos(iDim)*1e3,
 					inputDataVol->get_maxPos(iDim)*1e3);
+				
+				zCropRaw[0] = inputDataVol->get_minPos(0);
+				zCropRaw[1] = inputDataVol->get_maxPos(0);
+				xCropRaw[0] = inputDataVol->get_minPos(1);
+				xCropRaw[1] = inputDataVol->get_maxPos(1);
+				yCropRaw[0] = inputDataVol->get_minPos(2);
+				yCropRaw[1] = inputDataVol->get_maxPos(2);
 			}
 		}
 		ImGuiFileDialog::Instance()->CloseDialog("ChooseFileDlgKey");
@@ -258,6 +267,91 @@ void interface::DataLoaderWindow()
 			ImGui::ColorEdit4("Min color", inDataMapper.get_pminCol(), ImGuiColorEditFlags_Float);
 			ImGui::ColorEdit4("Max color", inDataMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
 		}
+
+		if (ImGui::CollapsingHeader("MIP preview"))
+		{
+
+			zCropRawMm[0] = zCropRaw[0] * 1e6;
+			zCropRawMm[1] = zCropRaw[1] * 1e6;
+			xCropRawMm[0] = xCropRaw[0] * 1e3;
+			xCropRawMm[1] = xCropRaw[1] * 1e3;
+			yCropRawMm[0] = yCropRaw[0] * 1e3;
+			yCropRawMm[1] = yCropRaw[1] * 1e3;
+
+			// read in users idea of z/x/y cropping
+			ImGui::SliderFloat2("t crop [micros]", 
+				&zCropRawMm[0], inputDataVol->get_minPos(0) * 1e6, inputDataVol->get_maxPos(0) * 1e6);
+			ImGui::SliderFloat2("x crop lower [mm]", 
+				&xCropRawMm[0], inputDataVol->get_minPos(1) * 1e3, inputDataVol->get_maxPos(1) * 1e3);
+			ImGui::SliderFloat2("y crop upper [mm]", 
+				&yCropRawMm[0], inputDataVol->get_minPos(2) * 1e3, inputDataVol->get_maxPos(2) * 1e3);
+			ImGui::SliderFloat("z stretch", &zStretchRaw, 0.5, 10);
+			
+			zCropRaw[0] = zCropRawMm[0] * 1e-6;
+			zCropRaw[1] = zCropRawMm[1] * 1e-6;
+			xCropRaw[0] = xCropRawMm[0] * 1e-3;
+			xCropRaw[1] = xCropRawMm[1] * 1e-3;
+			yCropRaw[0] = yCropRawMm[0] * 1e-3;
+			yCropRaw[1] = yCropRawMm[1] * 1e-3;
+
+			inputDataVol->set_cropRangeZ(&zCropRaw[0]);
+			inputDataVol->set_cropRangeX(&xCropRaw[0]);
+			inputDataVol->set_cropRangeY(&yCropRaw[0]);
+
+			// update cropped mips if something changed
+			if (inputDataVol->get_updatedCropRange())
+				inputDataVol->calcCroppedMips();
+
+			const float xStart = (xCropRaw[0] - inputDataVol->get_minPos(1)) / inputDataVol->get_length(1);
+			const float xEnd = (xCropRaw[1] - inputDataVol->get_minPos(1)) / inputDataVol->get_length(1);
+			const float yStart = (yCropRaw[0] - inputDataVol->get_minPos(2)) / inputDataVol->get_length(2);
+			const float yEnd = (yCropRaw[1] - inputDataVol->get_minPos(2)) / inputDataVol->get_length(2); 
+
+			const int width = 550;
+			const int height = (float) (width) / (inputDataVol->get_length(1) * (xEnd - xStart)) * 
+				(inputDataVol->get_length(2) * (yEnd - yStart));
+
+			// plot MIP alonmg z
+			ImImagesc(
+				inputDataVol->get_croppedMipZ(), 
+				inputDataVol->get_dim(1), 
+				inputDataVol->get_dim(2), 
+				&inDataMipZ, 
+				mipRawMapper);
+			ImGui::Image((void*)(intptr_t)inDataMipZ, 
+				ImVec2(width, height),
+				ImVec2(xStart, yStart), // lower corner to crop
+				ImVec2(xEnd, yEnd)); // upper corner to crop
+
+			ImImagesc(
+				inputDataVol->get_croppedMipY(), 
+				inputDataVol->get_dim(1), 
+				inputDataVol->get_dim(0), 
+				&inDataMipY, 
+				mipRawMapper);
+
+			// plot MIP along Y
+			const float zStart = (zCropRaw[0] - inputDataVol->get_minPos(0)) / inputDataVol->get_length(0);
+			const float zEnd = (zCropRaw[1] - inputDataVol->get_minPos(0)) / inputDataVol->get_length(0); 			
+		
+			const int height2 = ((float) width) / (inputDataVol->get_length(1) * (xEnd - xStart)) 
+				* (inputDataVol->get_length(0) * sett->get_sos() * (zEnd - zStart)) * zStretchRaw;
+			// printf("width: %d, height %d\n", width, height2);
+
+			ImGui::Image((void*)(intptr_t)inDataMipY, 
+				ImVec2(width, height2), 
+				ImVec2(xStart, zStart), // lower corner to crop
+				ImVec2(xEnd, zEnd)); // upper corner to crop
+
+			// printf("min and max val crop: %f, %f\n", 
+			//		inputDataVol->get_minValCrop(),
+			//		inputDataVol->get_maxValCrop());
+
+			ImGui::SliderFloat("MinVal", mipRawMapper.get_pminVal(), inputDataVol->get_minValCrop(), inputDataVol->get_maxValCrop(), "%.1f");
+			ImGui::SliderFloat("MaxVal", mipRawMapper.get_pmaxVal(), inputDataVol->get_minValCrop(), inputDataVol->get_maxValCrop(), "%.1f");
+			ImGui::ColorEdit4("Min color", mipRawMapper.get_pminCol(), ImGuiColorEditFlags_Float);
+			ImGui::ColorEdit4("Max color", mipRawMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
+		}
 				
 	}
 
@@ -266,6 +360,7 @@ void interface::DataLoaderWindow()
 	return;
 }
 
+// helper function to display stuff
 void interface::ImImagesc(
 	const float* data, const uint64_t sizex, const uint64_t sizey, 
 	GLuint* out_texture, const color_mapper myCMap)

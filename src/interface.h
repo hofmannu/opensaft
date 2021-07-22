@@ -42,6 +42,10 @@ private:
 	GLuint inDataTexture;
 	GLuint inDataTextureSlice;
 
+	GLuint inDataMipZ;
+	GLuint inDataMipY;
+	color_mapper mipRawMapper;
+
 	// for output dataset vizualization
 	int currSliceZRecon = 0;
 	int currSliceYRecon = 0;
@@ -49,10 +53,19 @@ private:
 	GLuint reconDataTexture;
 	GLuint reconDataTextureSlice;
 
-	// cropping range which we apply to datasets
+	// cropping range which we apply to mips of reconstructed datasets
 	float zCrop[2] = {0, 1};
 	float xCrop[2] = {0, 1};
 	float yCrop[2] = {0, 1};
+
+	// cropping range which we apply to mips of raw datasets
+	float xCropRaw[2] = {0, 1};
+	float zCropRaw[2] = {0, 1};
+	float yCropRaw[2] = {0, 1};
+	float xCropRawMm[2] = {0, 1};
+	float zCropRawMm[2] = {0, 1};
+	float yCropRawMm[2] = {0, 1};
+	float zStretchRaw = 4; // how much should we stretch the preview in z
 
 	GLuint reconMipZ;
 	GLuint reconMipY;

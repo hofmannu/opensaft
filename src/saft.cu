@@ -8,6 +8,7 @@
 	- implement frequency band filtering
 */
 
+// gpu kernel for SAFT
 __global__ void SAFT
 (
 	float* outputVol, // reconstructed output volume [it, ix, iy]
@@ -98,6 +99,7 @@ __global__ void SAFT
 	return;
 }
 
+// crop the image to the field of view
 void saft::crop()
 {
 	// check if all max values are bigger then the minimum values, otherwise swap them
@@ -151,6 +153,8 @@ void saft::crop()
 
 	return;
 }
+
+// run the kernel but on the CPU
 void saft::saft_cpu()
 {
 
@@ -254,7 +258,7 @@ void saft::saft_cpu()
 	return;
 }
 
-
+// start the actual reconstruction
 void saft::recon()
 {
 	// perform cropping of dataset to user defined boundaries
@@ -367,5 +371,4 @@ void saft::recon()
 	reconData.calcMinMax();
 	reconData.calcMips();
 	return;
-
 }
