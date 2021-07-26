@@ -178,14 +178,13 @@ void interface::DataLoaderWindow()
 				sett->set_crop(iDim, 
 					inputDataVol->get_minPos(iDim)*1e3,
 					inputDataVol->get_maxPos(iDim)*1e3);
-				
-				zCropRaw[0] = inputDataVol->get_minPos(0);
-				zCropRaw[1] = inputDataVol->get_maxPos(0);
-				xCropRaw[0] = inputDataVol->get_minPos(1);
-				xCropRaw[1] = inputDataVol->get_maxPos(1);
-				yCropRaw[0] = inputDataVol->get_minPos(2);
-				yCropRaw[1] = inputDataVol->get_maxPos(2);
 			}
+			zCropRaw[0] = inputDataVol->get_minPos(0);
+			zCropRaw[1] = inputDataVol->get_maxPos(0);
+			xCropRaw[0] = inputDataVol->get_minPos(1);
+			xCropRaw[1] = inputDataVol->get_maxPos(1);
+			yCropRaw[0] = inputDataVol->get_minPos(2);
+			yCropRaw[1] = inputDataVol->get_maxPos(2);
 		}
 		ImGuiFileDialog::Instance()->CloseDialog("ChooseFileDlgKey");
 	}
@@ -491,9 +490,9 @@ void interface::ReconWindow()
 			yCropRecon[0] = yCropReconMm[0] * 1e-3;
 			yCropRecon[1] = yCropReconMm[1] * 1e-3;
 
-			reconDataVol->set_cropRangeZ(&zCropRaw[0]);
-			reconDataVol->set_cropRangeX(&xCropRaw[0]);
-			reconDataVol->set_cropRangeY(&yCropRaw[0]);
+			reconDataVol->set_cropRangeZ(&zCropRecon[0]);
+			reconDataVol->set_cropRangeX(&xCropRecon[0]);
+			reconDataVol->set_cropRangeY(&yCropRecon[0]);
 
 			// update cropped mips if something changed
 			if (reconDataVol->get_updatedCropRange())
@@ -508,7 +507,7 @@ void interface::ReconWindow()
 			const int height = (float) (width) / (reconDataVol->get_length(1) * (xEnd - xStart)) * 
 				(reconDataVol->get_length(2) * (yEnd - yStart));
 
-			// plot MIP alonmg z
+			// plot MIP with normal axis along z
 			ImImagesc(
 				reconDataVol->get_croppedMipZ(), 
 				reconDataVol->get_dim(1), 
