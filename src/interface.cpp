@@ -458,10 +458,12 @@ void interface::ReconWindow()
 			const int height2 = (float) width / reconDataVol->get_length(1) * reconDataVol->get_length(0);
 			ImGui::Image((void*)(intptr_t)reconSliceY, ImVec2(width, height2));
 			
-			ImGui::SliderFloat("MinVal", reconDataMapper.get_pminVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
-			ImGui::SliderFloat("MaxVal", reconDataMapper.get_pmaxVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
-			ImGui::ColorEdit4("Min color", reconDataMapper.get_pminCol(), ImGuiColorEditFlags_Float);
-			ImGui::ColorEdit4("Max color", reconDataMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
+			ImGui::SliderFloat("MinVal slice", reconDataMapper.get_pminVal(), 
+				reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
+			ImGui::SliderFloat("MaxVal slice", reconDataMapper.get_pmaxVal(), 
+				reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
+			ImGui::ColorEdit4("Min color slice", reconDataMapper.get_pminCol(), ImGuiColorEditFlags_Float);
+			ImGui::ColorEdit4("Max color slice", reconDataMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
 		}
 
 		if (ImGui::CollapsingHeader("MIP preview"))
@@ -540,12 +542,12 @@ void interface::ReconWindow()
 				ImVec2(xStart, zStart), // lower corner to crop
 				ImVec2(xEnd, zEnd)); // upper corner to crop
 
-			ImGui::SliderFloat("MinVal", reconMipMapper.get_pminVal(), reconDataVol->get_minValCrop(), 
+			ImGui::SliderFloat("MinVal MIP", reconMipMapper.get_pminVal(), reconDataVol->get_minValCrop(), 
 				reconDataVol->get_maxValCrop(), "%.1f");
-			ImGui::SliderFloat("MaxVal", reconMipMapper.get_pmaxVal(), reconDataVol->get_minValCrop(), 
+			ImGui::SliderFloat("MaxVal MIP", reconMipMapper.get_pmaxVal(), reconDataVol->get_minValCrop(), 
 				reconDataVol->get_maxValCrop(), "%.1f");
-			ImGui::ColorEdit4("Min color", reconMipMapper.get_pminCol(), ImGuiColorEditFlags_Float);
-			ImGui::ColorEdit4("Max color", reconMipMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
+			ImGui::ColorEdit4("Min color MIP", reconMipMapper.get_pminCol(), ImGuiColorEditFlags_Float);
+			ImGui::ColorEdit4("Max color MIP", reconMipMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
 		}
 		
 		// this is not implemented yet but at some point we want to have an option here to export the previews
