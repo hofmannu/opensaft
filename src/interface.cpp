@@ -407,12 +407,12 @@ void interface::ReconWindow()
 		// if this is the first reconstruction we have done, update the cropping
 		if (isReconDone == 0)
 		{
-			zCrop[0] = reconDataVol->get_minPos(0);
-			zCrop[1] = reconDataVol->get_maxPos(0);
-			xCrop[0] = reconDataVol->get_minPos(1);
-			xCrop[1] = reconDataVol->get_maxPos(1);
-			yCrop[0] = reconDataVol->get_minPos(0);
-			yCrop[1] = reconDataVol->get_maxPos(1);
+			zCropRecon[0] = reconDataVol->get_minPos(0);
+			zCropRecon[1] = reconDataVol->get_maxPos(0);
+			xCropRecon[0] = reconDataVol->get_minPos(1);
+			xCropRecon[1] = reconDataVol->get_maxPos(1);
+			yCropRecon[0] = reconDataVol->get_minPos(0);
+			yCropRecon[1] = reconDataVol->get_maxPos(1);
 		}
 
 		isReconDone = 1;
@@ -428,32 +428,7 @@ void interface::ReconWindow()
 	if (isReconDone)
 	{
 		ImGui::Text("Last reconstruction took %f seconds.", recon.get_reconTime());
-		if (ImGui::CollapsingHeader("MIP preview"))
-		{
-			const int width = 550;
-			const int height = (float) width / reconDataVol->get_length(1) * 
-				reconDataVol->get_length(2);
-
-			// read in users idea of z/x/y cropping
-			ImGui::InputFloat2("z crop", &zCrop[0]);
-			ImGui::InputFloat2("x crop", &xCrop[0]);
-			ImGui::InputFloat2("y crop", &yCrop[0]);
-
-			ImImagesc(reconDataVol->get_croppedMipZ(&zCrop[0]),	reconDataVol->get_dim(1), 
-				reconDataVol->get_dim(2), &reconMipZ, mipMapper);
-			ImGui::Image((void*)(intptr_t)reconMipZ, ImVec2(width, height));
-
-			ImImagesc(reconDataVol->get_croppedMipY(&yCrop[0]), reconDataVol->get_dim(1), 
-				reconDataVol->get_dim(0), &reconMipY, mipMapper);
-			const int height2 = (float) width / reconDataVol->get_length(1) * reconDataVol->get_length(0);
-			ImGui::Image((void*)(intptr_t)reconMipY, ImVec2(width, height2));
-
-			ImGui::SliderFloat("MinVal", mipMapper.get_pminVal(), reconDataVol->get_minValCrop(), reconDataVol->get_maxValCrop(), "%.1f");
-			ImGui::SliderFloat("MaxVal", mipMapper.get_pmaxVal(), reconDataVol->get_minValCrop(), reconDataVol->get_maxValCrop(), "%.1f");
-			ImGui::ColorEdit4("Min color", mipMapper.get_pminCol(), ImGuiColorEditFlags_Float);
-			ImGui::ColorEdit4("Max color", mipMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
-		}
-
+		
 		// slice preview through reconstruction
 		if (ImGui::CollapsingHeader("Reconstruction slicer"))
 		{
@@ -461,27 +436,120 @@ void interface::ReconWindow()
 			float tSlice = reconDataVol->get_pos(currSliceZRecon, 0);
 			ImGui::Text("Time of current layer: %f micros", tSlice * 1e6);
 			ImGui::Text("Approximated z layer: %f mm", tSlice * sett->get_sos());
-			ImImagesc(reconDataVol->get_psliceZ((uint64_t) currSliceZRecon),
-				reconDataVol->get_dim(1), reconDataVol->get_dim(2), &reconDataTexture, reconDataMapper);
+			ImImagesc(
+				reconDataVol->get_psliceZ((uint64_t) currSliceZRecon),
+				reconDataVol->get_dim(1), 
+				reconDataVol->get_dim(2), 
+				&reconSliceZ, 
+				reconDataMapper);
 			
 			const int width = 550;
 			const int height = (float) width / reconDataVol->get_length(1) * 
 				reconDataVol->get_length(2);
-			ImGui::Image((void*)(intptr_t)reconDataTexture, ImVec2(width, height));
+			ImGui::Image((void*)(intptr_t)reconSliceZ, ImVec2(width, height));
 			
 			ImGui::SliderInt("yLayer", &currSliceYRecon, 0, reconDataVol->get_dim(2) - 1);
 
-			ImImagesc(reconDataVol->get_psliceY((uint64_t) currSliceYRecon),
-			 	reconDataVol->get_dim(1), reconDataVol->get_dim(0), &reconDataTextureSlice, reconDataMapper);
+			ImImagesc(
+				reconDataVol->get_psliceY((uint64_t) currSliceYRecon),
+			 	reconDataVol->get_dim(1), reconDataVol->get_dim(0), 
+			 	&reconSliceY, 
+			 	reconDataMapper);
+
 			const int height2 = (float) width / reconDataVol->get_length(1) * reconDataVol->get_length(0);
-			ImGui::Image((void*)(intptr_t)reconDataTextureSlice, ImVec2(width, height2));
+			ImGui::Image((void*)(intptr_t)reconSliceY, ImVec2(width, height2));
 			
 			ImGui::SliderFloat("MinVal", reconDataMapper.get_pminVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
 			ImGui::SliderFloat("MaxVal", reconDataMapper.get_pmaxVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
 			ImGui::ColorEdit4("Min color", reconDataMapper.get_pminCol(), ImGuiColorEditFlags_Float);
 			ImGui::ColorEdit4("Max color", reconDataMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
 		}
-	
+
+		if (ImGui::CollapsingHeader("MIP preview"))
+		{
+
+			zCropReconMm[0] = zCropRecon[0] * 1e6;
+			zCropReconMm[1] = zCropRecon[1] * 1e6;
+			xCropReconMm[0] = xCropRecon[0] * 1e3;
+			xCropReconMm[1] = xCropRecon[1] * 1e3;
+			yCropReconMm[0] = yCropRecon[0] * 1e3;
+			yCropReconMm[1] = yCropRecon[1] * 1e3;
+
+			// read in users idea of z/x/y cropping
+			ImGui::SliderFloat2("t crop [micros]", 
+				&zCropReconMm[0], reconDataVol->get_minPos(0) * 1e6, reconDataVol->get_maxPos(0) * 1e6);
+			ImGui::SliderFloat2("x crop lower [mm]", 
+				&xCropReconMm[0], reconDataVol->get_minPos(1) * 1e3, reconDataVol->get_maxPos(1) * 1e3);
+			ImGui::SliderFloat2("y crop upper [mm]", 
+				&yCropReconMm[0], reconDataVol->get_minPos(2) * 1e3, reconDataVol->get_maxPos(2) * 1e3);
+			ImGui::SliderFloat("z stretch", &zStretchRaw, 0.5, 10);
+			
+			zCropRecon[0] = zCropReconMm[0] * 1e-6;
+			zCropRecon[1] = zCropReconMm[1] * 1e-6;
+			xCropRecon[0] = xCropReconMm[0] * 1e-3;
+			xCropRecon[1] = xCropReconMm[1] * 1e-3;
+			yCropRecon[0] = yCropReconMm[0] * 1e-3;
+			yCropRecon[1] = yCropReconMm[1] * 1e-3;
+
+			reconDataVol->set_cropRangeZ(&zCropRaw[0]);
+			reconDataVol->set_cropRangeX(&xCropRaw[0]);
+			reconDataVol->set_cropRangeY(&yCropRaw[0]);
+
+			// update cropped mips if something changed
+			if (reconDataVol->get_updatedCropRange())
+				reconDataVol->calcCroppedMips();
+
+			const float xStart = (xCropRecon[0] - reconDataVol->get_minPos(1)) / reconDataVol->get_length(1);
+			const float xEnd = (xCropRecon[1] - reconDataVol->get_minPos(1)) / reconDataVol->get_length(1);
+			const float yStart = (yCropRecon[0] - reconDataVol->get_minPos(2)) / reconDataVol->get_length(2);
+			const float yEnd = (yCropRecon[1] - reconDataVol->get_minPos(2)) / reconDataVol->get_length(2); 
+
+			const int width = 550;
+			const int height = (float) (width) / (reconDataVol->get_length(1) * (xEnd - xStart)) * 
+				(reconDataVol->get_length(2) * (yEnd - yStart));
+
+			// plot MIP alonmg z
+			ImImagesc(
+				reconDataVol->get_croppedMipZ(), 
+				reconDataVol->get_dim(1), 
+				reconDataVol->get_dim(2), 
+				&reconMipZ, 
+				reconMipMapper);
+
+			ImGui::Image((void*)(intptr_t)reconMipZ, 
+				ImVec2(width, height),
+				ImVec2(xStart, yStart), // lower corner to crop
+				ImVec2(xEnd, yEnd)); // upper corner to crop
+
+			ImImagesc(
+				reconDataVol->get_croppedMipY(), 
+				reconDataVol->get_dim(1), 
+				reconDataVol->get_dim(0), 
+				&reconMipY, 
+				reconMipMapper);
+
+			// plot MIP along Y
+			const float zStart = (zCropRaw[0] - reconDataVol->get_minPos(0)) / reconDataVol->get_length(0);
+			const float zEnd = (zCropRaw[1] - reconDataVol->get_minPos(0)) / reconDataVol->get_length(0); 			
+		
+			const int height2 = ((float) width) / (reconDataVol->get_length(1) * (xEnd - xStart)) 
+				* (reconDataVol->get_length(0) * (zEnd - zStart)) * zStretchRaw;
+			// printf("width: %d, height %d\n", width, height2);
+
+			ImGui::Image((void*)(intptr_t)reconMipY, 
+				ImVec2(width, height2), 
+				ImVec2(xStart, zStart), // lower corner to crop
+				ImVec2(xEnd, zEnd)); // upper corner to crop
+
+			ImGui::SliderFloat("MinVal", reconMipMapper.get_pminVal(), reconDataVol->get_minValCrop(), 
+				reconDataVol->get_maxValCrop(), "%.1f");
+			ImGui::SliderFloat("MaxVal", reconMipMapper.get_pmaxVal(), reconDataVol->get_minValCrop(), 
+				reconDataVol->get_maxValCrop(), "%.1f");
+			ImGui::ColorEdit4("Min color", reconMipMapper.get_pminCol(), ImGuiColorEditFlags_Float);
+			ImGui::ColorEdit4("Max color", reconMipMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
+		}
+		
+		// this is not implemented yet but at some point we want to have an option here to export the previews
 		if (ImGui::CollapsingHeader("Preview export functions"))
 		{
 			static char filePath [64];

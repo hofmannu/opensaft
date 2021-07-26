@@ -296,7 +296,7 @@ void saft::recon()
 			croppedData.get_nElements() * sizeof(float) ));
 		if (m1)
 		{
-			printf("Could not allocate memory on GPU");
+			printf("Could not allocate memory on GPU\n");
 			throw "CudaMemAllocErr";
 			return;
 		}
@@ -307,7 +307,7 @@ void saft::recon()
 				croppedData.get_nElements() * sizeof(float), cudaMemcpyHostToDevice));
 		if (cpy1)
 		{
-			printf("Could not copy array to GPU");
+			printf("Could not copy array to GPU\n");
 			throw "CudaMemCpyErr";	
 			return;
 		}
@@ -350,6 +350,7 @@ void saft::recon()
 		{
 			printf("error during kernel execution:\n");
 			printf(cudaGetErrorString(err));
+			printf("\n");
 			throw "CudaKernelCrash";
 		}
 		cudaMemcpy(reconData.get_pdata(), outputVol_dev, 
