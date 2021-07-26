@@ -269,7 +269,7 @@ void interface::DataLoaderWindow()
 		}
 
 		if (ImGui::CollapsingHeader("MIP preview"))
-		{
+		{	
 
 			zCropRawMm[0] = zCropRaw[0] * 1e6;
 			zCropRawMm[1] = zCropRaw[1] * 1e6;
@@ -468,8 +468,8 @@ void interface::ReconWindow()
 		if (ImGui::CollapsingHeader("MIP preview"))
 		{
 
-			zCropReconMm[0] = zCropRecon[0] * 1e6;
-			zCropReconMm[1] = zCropRecon[1] * 1e6;
+			zCropReconMm[0] = zCropRecon[0] * 1e3;
+			zCropReconMm[1] = zCropRecon[1] * 1e3;
 			xCropReconMm[0] = xCropRecon[0] * 1e3;
 			xCropReconMm[1] = xCropRecon[1] * 1e3;
 			yCropReconMm[0] = yCropRecon[0] * 1e3;
@@ -477,15 +477,15 @@ void interface::ReconWindow()
 
 			// read in users idea of z/x/y cropping
 			ImGui::SliderFloat2("t crop [micros]", 
-				&zCropReconMm[0], reconDataVol->get_minPos(0) * 1e6, reconDataVol->get_maxPos(0) * 1e6);
+				&zCropReconMm[0], reconDataVol->get_minPos(0) * 1e3, reconDataVol->get_maxPos(0) * 1e3);
 			ImGui::SliderFloat2("x crop lower [mm]", 
 				&xCropReconMm[0], reconDataVol->get_minPos(1) * 1e3, reconDataVol->get_maxPos(1) * 1e3);
 			ImGui::SliderFloat2("y crop upper [mm]", 
 				&yCropReconMm[0], reconDataVol->get_minPos(2) * 1e3, reconDataVol->get_maxPos(2) * 1e3);
-			ImGui::SliderFloat("z stretch", &zStretchRaw, 0.5, 10);
+			ImGui::SliderFloat("z stretch", &zStretchRecon, 0.5, 10);
 			
-			zCropRecon[0] = zCropReconMm[0] * 1e-6;
-			zCropRecon[1] = zCropReconMm[1] * 1e-6;
+			zCropRecon[0] = zCropReconMm[0] * 1e-3;
+			zCropRecon[1] = zCropReconMm[1] * 1e-3;
 			xCropRecon[0] = xCropReconMm[0] * 1e-3;
 			xCropRecon[1] = xCropReconMm[1] * 1e-3;
 			yCropRecon[0] = yCropReconMm[0] * 1e-3;
@@ -529,11 +529,11 @@ void interface::ReconWindow()
 				reconMipMapper);
 
 			// plot MIP along Y
-			const float zStart = (zCropRaw[0] - reconDataVol->get_minPos(0)) / reconDataVol->get_length(0);
-			const float zEnd = (zCropRaw[1] - reconDataVol->get_minPos(0)) / reconDataVol->get_length(0); 			
+			const float zStart = (zCropRecon[0] - reconDataVol->get_minPos(0)) / reconDataVol->get_length(0);
+			const float zEnd = (zCropRecon[1] - reconDataVol->get_minPos(0)) / reconDataVol->get_length(0); 			
 		
 			const int height2 = ((float) width) / (reconDataVol->get_length(1) * (xEnd - xStart)) 
-				* (reconDataVol->get_length(0) * (zEnd - zStart)) * zStretchRaw;
+				* (reconDataVol->get_length(0) * (zEnd - zStart)) * zStretchRecon;
 			// printf("width: %d, height %d\n", width, height2);
 
 			ImGui::Image((void*)(intptr_t)reconMipY, 
