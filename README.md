@@ -47,7 +47,7 @@ The last command will generate an executable called `main_exp`.
 
 ## Planned features
 *  Bandpass filtering directly within GUI and separate reconstruction into different normalized frequency bands as done in RSOM processing software
-
+*  Include sensitivity field building and weighting as done in WSAFT based on a GPU calculated model of the spherically focused detector
 ## Limitations of the underlying model
 SAFT induces a strong absorption bias over depth. Absorbance "reconstructed" at different depths can therefore never be compared in a quantitative manner. It also tends to amplify low frequency signals which is the reason why most groups so far reconstruct different freqeucny bands independently (feature requires implementation). In planes very distant from the focus blurring is unavoidable due to the large shape of the reconstruction arcs.
 
