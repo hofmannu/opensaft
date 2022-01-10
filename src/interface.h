@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>    // Initialize with gl3wInit()
 
-#include <thread> 
+#include <thread>
 
 #include "../lib/imgui/imgui.h"
 #include "imgui_impl_sdl.h"
@@ -30,6 +30,8 @@ private:
 
 	// all the pointers to things which we get from the saft main class
 	saft recon; // object for reconstruction
+	std::thread reconThread; // this is the thread in which we run the reconstruction
+
 	transducer* trans;
 	reconSettings* sett;
 	volume* inputDataVol;
@@ -46,18 +48,6 @@ private:
 	GLuint inDataMipY;
 	color_mapper mipRawMapper;
 
-	// for output dataset vizualization
-	int currSliceZRecon = 0;
-	int currSliceYRecon = 0;
-	color_mapper reconDataMapper;
-	GLuint reconDataTexture;
-	GLuint reconDataTextureSlice;
-
-	// cropping range which we apply to mips of reconstructed datasets
-	float zCrop[2] = {0, 1};
-	float xCrop[2] = {0, 1};
-	float yCrop[2] = {0, 1};
-
 	// cropping range which we apply to mips of raw datasets
 	float xCropRaw[2] = {0, 1};
 	float zCropRaw[2] = {0, 1};
@@ -67,9 +57,26 @@ private:
 	float yCropRawMm[2] = {0, 1};
 	float zStretchRaw = 4; // how much should we stretch the preview in z
 
+	// for output dataset vizualization
+	int currSliceZRecon = 0;
+	int currSliceYRecon = 0;
+	GLuint reconSliceY; // crossection through reconstructed volume along y normal
+	GLuint reconSliceZ; // crossection through reconstructed volume along z normal
+	color_mapper reconDataMapper;
+
+	GLuint reconMipY; // object used for reconstructed mip along y normal
 	GLuint reconMipZ;
-	GLuint reconMipY;
-	color_mapper mipMapper;
+	color_mapper reconMipMapper;
+
+
+	// cropping range which we apply to mips of reconstructed datasets
+	float zCropRecon[2] = {0, 1};
+	float xCropRecon[2] = {0, 1};
+	float yCropRecon[2] = {0, 1};
+	float zCropReconMm[2] = {0, 1};
+	float xCropReconMm[2] = {0, 1};
+	float yCropReconMm[2] = {0, 1};
+	float zStretchRecon = 4;
 
 	void MainDisplayCode();
 
@@ -86,6 +93,7 @@ private:
 
 	bool isDataSetDefined = 0;
 	bool isReconDone = 0;
+	bool isReconRunning = 0;
 
 	const char* windowTitle = "opensaft";
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.10f); // bg color

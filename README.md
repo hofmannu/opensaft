@@ -47,7 +47,7 @@ The last command will generate an executable called `main_exp`.
 
 ## Planned features
 *  Bandpass filtering directly within GUI and separate reconstruction into different normalized frequency bands as done in RSOM processing software
-
+*  Include sensitivity field building and weighting as done in WSAFT based on a GPU calculated model of the spherically focused detector
 ## Limitations of the underlying model
 SAFT induces a strong absorption bias over depth. Absorbance "reconstructed" at different depths can therefore never be compared in a quantitative manner. It also tends to amplify low frequency signals which is the reason why most groups so far reconstruct different freqeucny bands independently (feature requires implementation). In planes very distant from the focus blurring is unavoidable due to the large shape of the reconstruction arcs.
 
@@ -56,3 +56,10 @@ SAFT induces a strong absorption bias over depth. Absorbance "reconstructed" at 
 *  J. Turner et al.: Universal weighted synthetic aperture focusing technique (W-SAFT) for scanning optoacoustic microscopy in Optica 4 (7), pp. 770 - 778 (2017), [10.1364/OPTICA.4.000770](https://doi.org/10.1364/OPTICA.4.000770)
 *  M.-L. Li et al.: Improved in vivo photoacoustic microscopy based on a virtual-detector concept in Optics Letters 31 (4), pp. 474 - 476 (2006), [10.1364/OL.31.000474](https://doi.org/10.1364/OL.31.000474) 
 *  Urs A. T. Hofmann et al.: Rapid functional optoacoustic micro-angiography in a burst mode ion Optics Letters 45 (9), pp. 2522 - 2825 (2020), [10.1364/OL.387630](https://doi.org/10.1364/OL.387630)
+
+
+## Known issue
+
+### Error while loading files
+
+If there is an error occuring about a version mismatch of the hdf5 library while loading a dataset from a file, it is most likely not the dataset itself that has an outdated format but rather the version of the installed h5 library and the library you linked during compilation (e.g. your PC updated the h5 library in the meantime). Simply recompile the program and the error should be gone.
