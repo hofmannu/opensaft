@@ -11,7 +11,7 @@
 #include <SDL2/SDL.h>
 #include <GL/glew.h>    // Initialize with gl3wInit()
 
-#include <thread> 
+#include <thread>
 
 #include "../lib/imgui/imgui.h"
 #include "imgui_impl_sdl.h"
@@ -30,6 +30,8 @@ private:
 
 	// all the pointers to things which we get from the saft main class
 	saft recon; // object for reconstruction
+	std::thread reconThread; // this is the thread in which we run the reconstruction
+
 	transducer* trans;
 	reconSettings* sett;
 	volume* inputDataVol;
@@ -58,13 +60,14 @@ private:
 	// for output dataset vizualization
 	int currSliceZRecon = 0;
 	int currSliceYRecon = 0;
+	GLuint reconSliceY; // crossection through reconstructed volume along y normal
+	GLuint reconSliceZ; // crossection through reconstructed volume along z normal
 	color_mapper reconDataMapper;
 
-	GLuint reconMipY;
+	GLuint reconMipY; // object used for reconstructed mip along y normal
 	GLuint reconMipZ;
-	GLuint reconSliceY;
-	GLuint reconSliceZ;
 	color_mapper reconMipMapper;
+
 
 	// cropping range which we apply to mips of reconstructed datasets
 	float zCropRecon[2] = {0, 1};
@@ -90,6 +93,7 @@ private:
 
 	bool isDataSetDefined = 0;
 	bool isReconDone = 0;
+	bool isReconRunning = 0;
 
 	const char* windowTitle = "opensaft";
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.10f); // bg color

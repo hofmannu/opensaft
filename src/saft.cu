@@ -4,7 +4,6 @@
 	main saft kernel
 
 	todo:
-	- implement boundary calculation
 	- implement frequency band filtering
 */
 
@@ -24,7 +23,8 @@ __global__ void SAFT
 	const float critRatio, // critical ratio betwen rDist and deltaZ
 	const float fd, // focal distance
 	const float rMin, // this is the minimum size accepted for any angle
-	const bool flagCfWeight // should we do coherence factor weighting?
+	const bool flagCfWeight, // should we do coherence factor weighting?
+	volatile int *progressCounter
 	)
 {
 	// get index in output volume
@@ -85,8 +85,8 @@ __global__ void SAFT
 
 		if (rfsaftabs > 0)
 		{
-			const float cf = flagCfWeight ? rfsaft * rfsaft / 
-				(rfsaftabs * rfsaftabs * ((float) nElem)) : 1;
+			const float cf = flagCfWeight ? (rfsaft * rfsaft / 
+				(rfsaftabs * rfsaftabs * ((float) nElem))) : 1.0;
 			outputVol[zIm + nT * (xIm + nX * yIm)] = ((float) signMultip) * rfsaft * cf;
 
 		}
@@ -94,9 +94,21 @@ __global__ void SAFT
 		{
 			outputVol[zIm + nT * (xIm + nX * yIm)] = 0;
 		}
+		// increase counter of reconstructed points
+		atomicAdd((int *)progressCounter, 1);
+		__threadfence_system();
 	}
 
+
 	return;
+}
+
+saft::saft()
+{
+	
+	processor_count = std::thread::hardware_concurrency();
+	printf("[saft] Found %d processor units... \n", processor_count);
+
 }
 
 // crop the image to the field of view
@@ -250,6 +262,11 @@ void saft::saft_cpu()
 				{
 					outputVol[zIm + nT * (xIm + nX * yIm)] = 0;
 				}
+
+				// update percDone
+				const uint32_t nTotal = nT * nY * nX;
+				const uint32_t nCurr = zIm + nT * (xIm + yIm * nX);
+				percDone = ((float) nCurr) / ((float) nTotal) * 100; 
 			}
 		}
 	}
@@ -258,11 +275,102 @@ void saft::saft_cpu()
 	return;
 }
 
+struct dcData
+{
+	uint64_t iVecStart;
+	uint64_t iVecEnd;
+	uint64_t nT;
+	uint64_t threadId;
+	float* ptr;
+};
+
+void *RemoveDc(void *threadarg)
+{
+	struct dcData * myData;
+	myData = (struct dcData *) threadarg;
+
+	#pragma unroll
+	for (uint64_t iVec = myData->iVecStart; iVec <= myData->iVecEnd; iVec++)
+	{
+		// calculate the full sum over the vector
+		float sum = 0;
+		uint64_t startIdx = iVec * myData->nT;
+		for (uint64_t iT = 0; iT < myData->nT; iT++)
+		{
+			sum += myData->ptr[startIdx];
+			startIdx++;
+		}
+		sum = sum / ((float) myData->nT);
+
+		startIdx = iVec * myData->nT;
+		for (uint64_t iT = 0; iT < myData->nT; iT++)
+		{
+			myData->ptr[startIdx] = myData->ptr[startIdx] - sum;
+			startIdx++;
+		}
+	}
+	pthread_exit(NULL);
+}
+
+// for each a scan first calculate the mean and then substract if from the vector
+void saft::remove_dc()
+{
+	printf("[saft] Removing DC offset... ");
+	fflush(stdout);
+
+	pthread_t threads[processor_count];
+	pthread_attr_t attr;
+	void *status;
+
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+	struct dcData td[processor_count];
+
+	uint64_t nVecs = croppedData.get_dim(1) * croppedData.get_dim(2);
+	const uint64_t nProcessorVecs = ceil((float) nVecs / ((float) processor_count));
+
+	// start individual threads taking care of dc removal
+	for (uint64_t iProcessor = 0; iProcessor < processor_count; iProcessor++)
+	{
+		td[iProcessor].threadId = iProcessor;
+		td[iProcessor].iVecStart = iProcessor * nProcessorVecs;
+		td[iProcessor].iVecEnd = (iProcessor + 1) * nProcessorVecs;
+		if (td[iProcessor].iVecEnd >= nVecs)
+		{
+			td[iProcessor].iVecEnd = nVecs - 1;	
+		}
+		td[iProcessor].nT = croppedData.get_dim(0);
+		td[iProcessor].ptr = croppedData.get_pdata();
+
+		int rc = pthread_create(&threads[iProcessor], &attr, RemoveDc, (void *)&td[iProcessor]);
+		if (rc) {
+	  	cout << "Error:unable to create thread," << rc << endl;
+	    exit(-1);
+	  }
+	}
+
+	// wait for ecxecution
+	pthread_attr_destroy(&attr);
+  for (uint64_t iProcessor = 0; iProcessor < processor_count; iProcessor++ ) 
+  {
+	  int 	rc = pthread_join(threads[iProcessor], &status);
+	  if (rc) {
+	    cout << "Error: unable to join," << rc << endl;
+	    exit(-1);
+	  }
+  }
+
+  printf("done!\n");
+	return;
+}
+
 // start the actual reconstruction
 void saft::recon()
 {
-	// perform cropping of dataset to user defined boundaries
-	crop();
+	isRunning = 1;
+	crop(); // perform cropping of dataset to user defined boundaries
+	remove_dc(); // remove dc component of each individual a scan in croppedData
 
 	// push properties over to reconstructed dataset and allocate memory
 	for (uint8_t iDim = 0; iDim < 3; iDim++)
@@ -271,10 +379,14 @@ void saft::recon()
 		reconData.set_res(iDim, croppedData.get_res(iDim));
 		reconData.set_origin(iDim, croppedData.get_origin(iDim));
 	}
+
+	// overwrite resolution and origin in z for us pulse echo mode
 	const float dz = sett.get_flagUs() ? croppedData.get_res(0) * sett.get_sos() / 2 :
 		croppedData.get_res(0) * sett.get_sos();
 	reconData.set_res(0, dz);
-	reconData.set_origin(0, croppedData.get_origin(0) * sett.get_sos());
+	const float originZ = sett.get_flagUs() ? croppedData.get_origin(0) * sett.get_sos() / 2 :
+		croppedData.get_origin(0) * sett.get_sos();
+	reconData.set_origin(0, originZ);
 	
 	reconData.alloc_memory();
 	clock_t startTime = clock();
@@ -303,7 +415,7 @@ void saft::recon()
 
 		// copy preprocessed volume to gpu
 		// copy signal matrix over to GPU and check if successful
-		bool cpy1 = (cudaSuccess != cudaMemcpy(inputVol_dev, croppedData.get_pdata(), 
+		const bool cpy1 = (cudaSuccess != cudaMemcpy(inputVol_dev, croppedData.get_pdata(), 
 				croppedData.get_nElements() * sizeof(float), cudaMemcpyHostToDevice));
 		if (cpy1)
 		{
@@ -313,7 +425,7 @@ void saft::recon()
 		}
 
 		// define kernel size
-		dim3 blockSize(1, 16, 16);
+		const dim3 blockSize(1, 16, 16);
 		dim3 gridSize(
 					(nt + blockSize.x - 1) / blockSize.x, 
 					(nx + blockSize.y - 1) / blockSize.y, 
@@ -326,6 +438,33 @@ void saft::recon()
 
 		// if the dataset is ultrasound pulse echo measurement, just multiply sos with 0.5
 		const float reconSos = sett.get_flagUs() ? (sett.get_sos() * 0.5) : sett.get_sos();
+
+		volatile int *d_progress, *h_progress;
+		const bool map1 = (cudaSuccess != cudaSetDeviceFlags(cudaDeviceMapHost));
+		if (map1)
+		{
+			printf("Something went wrong while mapping");
+			throw "CudaError";
+			return;
+		}
+
+	  const bool m2 = (cudaSuccess != cudaHostAlloc((void **)&h_progress, sizeof(int), cudaHostAllocMapped));
+	  if (m2)
+	  {
+	  	printf("Something went wrong while allocating the progress integer");
+	  	throw "CudaMemAllocErr";
+	  	return;
+	  }
+
+	  const bool mPtr = (cudaSuccess != cudaHostGetDevicePointer((int **)&d_progress, (int *)h_progress, 0));
+	  if (mPtr)
+	  {
+	  	printf("Something went wrong while getting the device pointer");
+	  	throw "CudaError";
+	  	return;
+	  }
+
+	  *h_progress = 0;
 
 		// execute actual kernel
 		// all in SI units!
@@ -340,8 +479,21 @@ void saft::recon()
 			critRatio,
 			trans.get_focalDistance() * 1e-3, // fical distance of transducer [m]
 			sett.get_rMin(),
-			sett.get_flagCoherenceW()
+			sett.get_flagCoherenceW(),
+			d_progress
 			);
+
+		int value = 0;
+		do{
+    	int value1 = *h_progress;
+    	if (value1 > value)
+    	{
+      	// printf("h_progress = %d\n", value1);
+       	value = value1;
+       	percDone = ((float) value) / ((float) nx * ny * nt) * 100.0;
+       }
+    } while (value < (nt * nx * ny));
+
 		cudaDeviceSynchronize();
 
 		// check if kernel execution was successful
@@ -359,10 +511,13 @@ void saft::recon()
 		// free gpu memory again
 		cudaFree(outputVol_dev);
 		cudaFree(inputVol_dev);
+		isRunning = 0;
 	}
 	else
 	{
+		isRunning = 1;
 		saft_cpu();
+		isRunning = 0;
 	}
 
 	clock_t endTime = clock();
@@ -372,4 +527,10 @@ void saft::recon()
 	reconData.calcMinMax();
 	reconData.calcMips();
 	return;
+}
+
+// return a thread which runs the reconstruction
+std::thread saft::recon2thread()
+{
+	return std::thread([=] { recon();} );
 }
