@@ -425,6 +425,13 @@ void interface::ReconWindow()
 			printf("Finished reconstruction procedure!\n");
 		}
 
+		// show reconstruct button if dataset was defined
+		if (!isDataSetDefined)
+		{
+			ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+	    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+		}
+
 		if (ImGui::Button("Reconstruct"))
 		{
 			printf("Starting reconstruction procedure...\n");
@@ -435,23 +442,34 @@ void interface::ReconWindow()
 			isReconRunning = 1;
 		}
 
+		if (!isDataSetDefined)
+		{
+			ImGui::PopItemFlag();
+	    ImGui::PopStyleVar();
+		}
+
 	}
 	else // here we simply show a disabled button and a progress bar
 	{
-
+		ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
+	  ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
 		if (ImGui::Button("Reconstruct"))
 		{
 			// nothing to be done
 		}
+		ImGui::PopItemFlag();
+	  ImGui::PopStyleVar();
+
 		ImGui::Text("Reconstruction in progress...");
+		time_t tt;
+		tt = system_clock::to_time_t(recon.get_tStart());
+
+		ImGui::Text("Started reconstruction at: %s\n", ctime(&tt));
+		ImGui::Text("ETA: %.1f seconds", recon.get_tRemain());
 		ImGui::ProgressBar(recon.get_percDone() / 100);
 	}
 
-	if (!isDataSetDefined || recon.get_isRunning())
-	{
-		ImGui::PopItemFlag();
-    ImGui::PopStyleVar();
-	}
+	
 
 	if (isReconDone) // this means that the reconstruction was performed at least once
 	{
@@ -490,19 +508,14 @@ void interface::ReconWindow()
 			const int height2 = (float) width / reconDataVol->get_length(1) * reconDataVol->get_length(0);
 			ImGui::Image((void*)(intptr_t)reconSliceY, ImVec2(width, height2));
 			
-<<<<<<< HEAD
-			ImGui::SliderFloat("Min val recon slice", reconDataMapper.get_pminVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
-			ImGui::SliderFloat("Max val recon slice", reconDataMapper.get_pmaxVal(), reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
-			ImGui::ColorEdit4("Min color recon slice", reconDataMapper.get_pminCol(), ImGuiColorEditFlags_Float);
-			ImGui::ColorEdit4("Max color recon slice", reconDataMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
-=======
-			ImGui::SliderFloat("MinVal slice", reconDataMapper.get_pminVal(), 
+			ImGui::SliderFloat("Min val recon slice", reconDataMapper.get_pminVal(), 
 				reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
-			ImGui::SliderFloat("MaxVal slice", reconDataMapper.get_pmaxVal(), 
+			ImGui::SliderFloat("Max val recon slice", reconDataMapper.get_pmaxVal(), 
 				reconDataVol->get_minVal(), reconDataVol->get_maxVal(), "%.1f");
-			ImGui::ColorEdit4("Min color slice", reconDataMapper.get_pminCol(), ImGuiColorEditFlags_Float);
-			ImGui::ColorEdit4("Max color slice", reconDataMapper.get_pmaxCol(), ImGuiColorEditFlags_Float);
->>>>>>> a4f02dc2b7768d8e552898125f6a31111f81e9df
+			ImGui::ColorEdit4("Min color recon slice", reconDataMapper.get_pminCol(), 
+				ImGuiColorEditFlags_Float);
+			ImGui::ColorEdit4("Max color recon slice", reconDataMapper.get_pmaxCol(), 
+				ImGuiColorEditFlags_Float);
 		}
 
 		if (ImGui::CollapsingHeader("MIP preview recon"))

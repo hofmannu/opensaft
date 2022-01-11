@@ -12,6 +12,8 @@
 #include <GL/glew.h>    // Initialize with gl3wInit()
 
 #include <thread>
+#include <ctime>
+#include <chrono>
 
 #include "../lib/imgui/imgui.h"
 #include "imgui_impl_sdl.h"

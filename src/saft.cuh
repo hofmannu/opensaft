@@ -17,6 +17,7 @@
 #include <cuda.h>
 #include <thread>
 #include <pthread.h>
+#include <chrono> // used to stop time which is required for execution
 
 #include "transducer.h"
 #include "reconSettings.h"
@@ -30,11 +31,17 @@ private:
 	volume preprocData; // preprocessed datasets
 	volume reconData; // reconstructed datasets
 	volume croppedData; // cropped dataset
-	double reconTime = 0; // time required for last reconstruction	
 
 	int processor_count = 1;
 	bool isRunning = 0; // flag indicating if reconstruction is currently running
 	float percDone = 0; // perc of reconstruction done so far [%]
+
+	// all we need to time the execution
+	high_resolution_clock::time_point tStart; // start time
+	high_resolution_clock::time_point tEnd; // end time
+	double tRemain = 0;
+	double reconTime = 0; // time required for last reconstruction	
+
 public:
 	// class constructor
 	saft();
@@ -53,6 +60,8 @@ public:
 	void remove_dc();
 
 	double get_reconTime() const {return reconTime;};
+	double get_tRemain() const {return tRemain;};
+	high_resolution_clock::time_point get_tStart() const {return tStart;};
 
 	bool get_isRunning() const {return isRunning;};
 	float get_percDone() const {return percDone;};
