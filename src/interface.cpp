@@ -393,12 +393,6 @@ void interface::ReconWindow()
 {
 	ImGui::Begin("Reconstruction", &show_recon_window);
 
-	if (!isDataSetDefined || recon.get_isRunning())
-	{
-		ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-	}
-	
 	if (!recon.get_isRunning())
 	{
 		if (isReconRunning)
@@ -451,21 +445,14 @@ void interface::ReconWindow()
 	}
 	else // here we simply show a disabled button and a progress bar
 	{
-		ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
-	  ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-		if (ImGui::Button("Reconstruct"))
-		{
-			// nothing to be done
-		}
-		ImGui::PopItemFlag();
-	  ImGui::PopStyleVar();
+		
 
 		ImGui::Text("Reconstruction in progress...");
 		time_t tt;
-		tt = system_clock::to_time_t(recon.get_tStart());
+		tt = std::chrono::system_clock::to_time_t(recon.get_tStart());
 
-		ImGui::Text("Started reconstruction at: %s\n", ctime(&tt));
-		ImGui::Text("ETA: %.1f seconds", recon.get_tRemain());
+		ImGui::Text("Started reconstruction at: %s", ctime(&tt));
+		ImGui::Text("Estimated time to arrival: %.1f seconds", recon.get_tRemain());
 		ImGui::ProgressBar(recon.get_percDone() / 100);
 	}
 

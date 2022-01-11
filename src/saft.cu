@@ -389,7 +389,7 @@ void saft::recon()
 	reconData.set_origin(0, originZ);
 	
 	reconData.alloc_memory(); // allocate memory
-	tStart = high_resolution_clock::now(); // save start time to variable
+	tStart = std::chrono::system_clock::now(); // save start time to variable
 
 	if (sett.get_flagGpu())
 	{
@@ -491,9 +491,9 @@ void saft::recon()
       	// printf("h_progress = %d\n", value1);
        	value = value1;
        	percDone = ((float) value) / ((float) nx * ny * nt) * 100.0;
-       	auto tCurr = high_resolution_clock::now();
-       	const double tPassed = duration_cast<duration<double>>(tCurr - tStart);
-       	tRemain = tPassed / precDone * (100 - precDone);
+       	auto tCurr = std::chrono::system_clock::now();
+       	const double tPassed = std::chrono::duration_cast<std::chrono::seconds>(tCurr - tStart).count();
+       	tRemain = tPassed / percDone * (100.0 - percDone);
        }
     } while (value < (nt * nx * ny));
 
@@ -523,8 +523,8 @@ void saft::recon()
 		isRunning = 0;
 	}
 
-	tEnd = high_resolution_clock::now();
-	reconTime = duration_cast<duration<double>>(tEnd - tStartstartTime);
+	tEnd = std::chrono::system_clock::now();
+	reconTime = std::chrono::duration_cast<std::chrono::seconds>(tEnd - tStart).count();
 	printf("[saft] reconstruction took %.1f seconds\n", reconTime);
 
 	// calculate minimum and maximum value in reconstructed volume

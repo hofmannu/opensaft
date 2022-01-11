@@ -23,6 +23,8 @@
 #include "reconSettings.h"
 #include "../lib/CVolume/src/volume.h"
 
+using namespace std;
+
 class saft
 {
 private:
@@ -37,8 +39,8 @@ private:
 	float percDone = 0; // perc of reconstruction done so far [%]
 
 	// all we need to time the execution
-	high_resolution_clock::time_point tStart; // start time
-	high_resolution_clock::time_point tEnd; // end time
+	std::chrono::time_point<std::chrono::system_clock> tStart; // start time
+	std::chrono::time_point<std::chrono::system_clock> tEnd; // end time
 	double tRemain = 0;
 	double reconTime = 0; // time required for last reconstruction	
 
@@ -61,7 +63,7 @@ public:
 
 	double get_reconTime() const {return reconTime;};
 	double get_tRemain() const {return tRemain;};
-	high_resolution_clock::time_point get_tStart() const {return tStart;};
+	std::chrono::time_point<std::chrono::system_clock> get_tStart() const {return tStart;};
 
 	bool get_isRunning() const {return isRunning;};
 	float get_percDone() const {return percDone;};
