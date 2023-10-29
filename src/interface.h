@@ -95,9 +95,9 @@ private:
 	bool show_data_loader = 1;
 	bool show_recon_window = 1;
 
-	bool isDataSetDefined = 0;
-	bool isReconDone = 0;
-	bool isReconRunning = 0;
+	bool isDataSetDefined = false;
+	bool isReconDone = false;
+	bool isReconRunning = false;
 
 	const char* windowTitle = "opensaft";
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.10f); // bg color
