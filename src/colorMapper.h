@@ -1,12 +1,11 @@
 /*
 	c++ tooolbox for simple mapping from numbers to colors
 	Author: Urs Hofmann
-	Mail: hofmannu@ethz.ch
+	Mail: mail@hofmannu.org
 	Date: 25.09.2020
 */
 
-#ifndef COLOR_MAPPER_H
-#define COLOR_MAPPER_H
+#pragma once
 
 #include <cstdio>
 #include <cstdint>
@@ -14,15 +13,15 @@
 class color_mapper
 {
 	private:
-		float minVal = -1; // minimum value in colormap
-		float maxVal = 1; // maximum value in colormap
-		float maxAbsVal = 1;
-		float span = 2;
+		float minVal = -1.0; // minimum value in colormap
+		float maxVal = 1.0; // maximum value in colormap
+		float maxAbsVal = 1.0;
+		float span = 2.0;
 
 		float minCol[4] = {0.0f, 0.0f, 0.0f, 0.00f}; // color assigned to min
 		float maxCol[4] = {1.0f, 1.0f, 1.0f, 1.00f}; // color assigned to max
 		float spanCol[4] = {0.0f, 0.0f, 0.0f, 0.00f};
-	
+
 		void calc_span_col();
 		void calc_max_abs();
 
@@ -38,18 +37,16 @@ class color_mapper
 		void set_mapType(const uint8_t _mapType);
 
 		// get pointer to min and max value
-		float* get_pmaxVal() {return &maxVal;};
-		float* get_pminVal() {return &minVal;};
-		float get_maxVal() const {return maxVal;};
-		float get_minVal() const {return minVal;};
-		float* get_pminCol() {return &minCol[0];};
-		float* get_pmaxCol() {return &maxCol[0];};
+		[[nodiscard]] float* get_pmaxVal() {return &maxVal;};
+		[[nodiscard]] float* get_pminVal() {return &minVal;};
+		[[nodiscard]] float get_maxVal() const noexcept {return maxVal;};
+		[[nodiscard]] float get_minVal() const noexcept {return minVal;};
+		[[nodiscard]] float* get_pminCol() {return &minCol[0];};
+		[[nodiscard]] float* get_pmaxCol() {return &maxCol[0];};
 
 		// transfer function
 		void convert_to_map(const float* dataIn, const uint64_t nElem, unsigned char* dataOut) const;
 		void convert_to_rgba(const float* dataIn, const uint64_t nElem, unsigned char* dataOut) const;
 		void convert_to_divmap(const float* dataIn, const uint64_t nElem, unsigned char* dataOut) const;
 };
-
-#endif
 
