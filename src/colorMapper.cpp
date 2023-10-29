@@ -1,4 +1,5 @@
-#include "color_mapper.cuh"
+#include "colorMapper.h"
+#include <math.h>
 
 void color_mapper::set_maxVal(const float _maxVal){
 	maxVal = _maxVal;
@@ -38,7 +39,7 @@ void color_mapper::calc_span_col()
 
 void color_mapper::calc_max_abs()
 {
-	maxAbsVal = (abs(maxVal) > abs(minVal)) ? abs(maxVal) : abs(minVal);
+	maxAbsVal = (fabsf(maxVal) > fabsf(minVal)) ? fabsf(maxVal) : fabsf(minVal);
 	return;
 }
 

@@ -1,12 +1,11 @@
 /*
 	class representing our interface including all imgui based in and outputs
 	Author: Urs Hofmann
-	Mail: hofmannu@ethz.ch
+	Mail: mail@hofmannu.org
 	Date: 27.12.2020
 */
 
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#pragma once
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>    // Initialize with gl3wInit()
@@ -15,16 +14,16 @@
 #include <ctime>
 #include <chrono>
 
-#include "../lib/imgui/imgui.h"
-#include "imgui_impl_sdl.h"
+#include "saft.h"
+#include "imgui.h"
+#include <GLFW/glfw3.h>
 #include "imgui_impl_opengl3.h"
 #include "ImGuiFileDialog.h"
-#include "imgui_plot.h"
-#include "saft.cuh"
+#include "implot.h"
 #include "transducer.h"
 #include "reconSettings.h"
-#include "../lib/CVolume/src/volume.h"
-#include "color_mapper.cuh"
+#include "volume.h"
+#include "colorMapper.h"
 
 class interface
 {
@@ -36,10 +35,12 @@ private:
 
 	transducer* trans;
 	reconSettings* sett;
+	// todo swithc this guy to unique_ptr
 	volume* inputDataVol;
 	volume* reconDataVol;
 
 	// for input dataset vizualization
+	// todo make slicer a separate class
 	int currSliceZ = 0;
 	int currSliceY = 0;
 	color_mapper inDataMapper;
@@ -70,7 +71,6 @@ private:
 	GLuint reconMipZ;
 	color_mapper reconMipMapper;
 
-
 	// cropping range which we apply to mips of reconstructed datasets
 	float zCropRecon[2] = {0, 1};
 	float xCropRecon[2] = {0, 1};
@@ -86,6 +86,8 @@ private:
 	void SettingsWindow(); // window to define reconstruction settings
 	void DataLoaderWindow(); // allows user to load a dataset from a file
 	void ReconWindow(); // reconstruction part
+	void SetupWorkspace(ImGuiID& dockspace_id);
+
 
 	// flags which windows are supposed to be shown
 	bool show_transducer_window = 1;
@@ -104,6 +106,10 @@ private:
 	const float* data, const uint64_t sizex, const uint64_t sizey, 
 	GLuint* out_texture, const color_mapper myCMap);
 
+	const char* m_windowTitle = "opensaft"; //!< title of the window created
+	const float m_clearColor[4] = {0.45f, 0.55f, 0.60f, 0.10f}; //!< background color of the window
+
+
 public:
 	interface(); // class constructor
 
@@ -111,5 +117,3 @@ public:
 
 
 };
-
-#endif
