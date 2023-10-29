@@ -29,13 +29,11 @@ static void HelpMarker(const char* desc) {
   return;
 }
 
-
 void interface::SetupWorkspace(ImGuiID& dockspace_id) {
   ImGui::DockBuilderRemoveNode(dockspace_id);
   ImGuiDockNodeFlags dockSpaceFlags = 0;
   ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
   ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetMainViewport()->Size);
-
 }
 
 void interface::InitWindow(int* argcp, char** argv) {
