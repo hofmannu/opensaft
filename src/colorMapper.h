@@ -13,10 +13,10 @@
 class color_mapper
 {
 	private:
-		float minVal = -1.0; // minimum value in colormap
-		float maxVal = 1.0; // maximum value in colormap
-		float maxAbsVal = 1.0;
-		float span = 2.0;
+		float minVal = -1.0f; // minimum value in colormap
+		float maxVal = 1.0f; // maximum value in colormap
+		float maxAbsVal = 1.0f;
+		float span = 2.0f;
 
 		float minCol[4] = {0.0f, 0.0f, 0.0f, 0.00f}; // color assigned to min
 		float maxCol[4] = {1.0f, 1.0f, 1.0f, 1.00f}; // color assigned to max

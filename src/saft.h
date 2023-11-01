@@ -42,8 +42,8 @@ private:
 	volume croppedData; // cropped dataset
 
 	int processor_count = 1;
-	bool isRunning = 0; // flag indicating if reconstruction is currently running
-	float percDone = 0; // perc of reconstruction done so far [%]
+	bool isRunning = false; // flag indicating if reconstruction is currently running
+	float percDone = 0.0f; // perc of reconstruction done so far [%]
 
 	// all we need to time the execution
 	std::chrono::time_point<std::chrono::system_clock> tStart; // start time
@@ -68,11 +68,11 @@ public:
 	void crop();
 	void remove_dc();
 
-	double get_reconTime() const {return reconTime;};
-	double get_tRemain() const {return tRemain;};
+	[[nodiscard]] double get_reconTime() const noexcept {return reconTime;};
+	[[nodiscard]] double get_tRemain() const noexcept {return tRemain;};
 	std::chrono::time_point<std::chrono::system_clock> get_tStart() const {return tStart;};
 
-	bool get_isRunning() const {return isRunning;};
-	float get_percDone() const {return percDone;};
+	[[nodiscard]] bool get_isRunning() const noexcept {return isRunning;};
+	[[nodiscard]] float get_percDone() const noexcept {return percDone;};
 };
 
