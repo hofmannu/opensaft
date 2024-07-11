@@ -6,8 +6,14 @@ project(opensaft
 	DESCRIPTION "Open source implementation of 3D SAFT"
 	LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
+
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif()
+message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+
 
 option(OPENSAFT_CUDA_SUPPORT "Enable CUDA support" OFF)
 option(OPENSAFT_TESTING "Build unit tests" ON)
