@@ -13,24 +13,23 @@
 #include <ctime>
 #include <thread>
 
-#include "ImGuiFileDialog.h"
 #include "ColorMapper.h"
+#include "ImGuiFileDialog.h"
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "implot.h"
 #include "reconSettings.h"
 #include "saft.h"
-#include "transducer.h"
+#include "Transducer.h"
 #include "volume.h"
 
 class interface {
  private:
   // all the pointers to things which we get from the saft main class
-  saft recon;  // object for reconstruction
-  std::thread
-      reconThread;  // this is the thread in which we run the reconstruction
+  saft recon; // object for reconstruction
+  std::thread reconThread; // reconstruction thread
 
-  transducer* trans;
+  Transducer *trans;
   reconSettings* sett;
   // todo swithc this guy to unique_ptr
   volume* inputDataVol;
@@ -98,15 +97,15 @@ class interface {
   const char *windowTitle = "opensaft";
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.10f); // bg color
 
-  void ImImagesc(const float* data, const uint64_t sizex, const uint64_t sizey,
-                 GLuint* out_texture, const color_mapper myCMap);
+  void ImImagesc(const float *data, const uint64_t sizex, const uint64_t sizey,
+                 GLuint *out_texture, const ColorMapper myCMap);
 
-  const char* m_windowTitle = "opensaft";  //!< title of the window created
-  const float m_clearColor[4] = {0.45f, 0.55f, 0.60f,
-                                 0.10f};  //!< background color of the window
+  const char *m_windowTitle = "opensaft"; //!< title of the window created
+  const Float4 m_clearColor{0.45f, 0.55f, 0.60f,
+                            0.10f}; //!< bg color of the window
 
- public:
-  interface();  // class constructor
+public:
+  interface(); // class constructor
 
   void InitWindow(int *argcp, char **argv);
 };

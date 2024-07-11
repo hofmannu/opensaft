@@ -16,8 +16,7 @@
 #include <thread>
 #include <pthread.h>
 #include <chrono> // used to stop time which is required for execution
-
-#include "transducer.h"
+#include "Transducer.h"
 #include "reconSettings.h"
 #include "volume.h"
 
@@ -35,7 +34,7 @@ struct dcData
 class saft
 {
 private:
-	transducer trans; // settings of the used transducer
+	Transducer trans; // settings of the used transducer
 	reconSettings sett; // reconstruction settings
 	volume preprocData; // preprocessed datasets
 	volume reconData; // reconstructed datasets
@@ -55,7 +54,7 @@ public:
 	// class constructor
 	saft();
 
-	transducer* get_ptrans() {return &trans;};
+	Transducer* get_ptrans() {return &trans;};
 	reconSettings* get_psett() {return &sett;};
 	volume* get_ppreprocData() {return &preprocData;};
 	volume* get_preconData() {return &reconData;};

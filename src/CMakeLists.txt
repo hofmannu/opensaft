@@ -3,13 +3,13 @@ PUBLIC
 	ColorMapper.h
 	interface.h
 	reconSettings.h
-	transducer.h
+	Transducer.h
 	saft.h
 PRIVATE
 	ColorMapper.cpp
 	interface.cpp
 	reconSettings.cpp
-	transducer.cpp
+	Transducer.cpp
 	saft.cpp
 	)
 
