@@ -2,6 +2,8 @@
 #include "MathUtil.h"
 #include <math.h>
 
+namespace opensaft {
+
 void ColorMapper::set_maxVal(const float _maxVal) {
   maxVal = _maxVal;
   calc_max_abs();
@@ -12,12 +14,12 @@ void ColorMapper::set_minVal(const float _minVal) {
   calc_max_abs();
 }
 
-void ColorMapper::set_minCol(const Float4 &_minCol) {
+void ColorMapper::set_minCol(const Float4& _minCol) {
   minCol = _minCol;
   calc_span_col();
 }
 
-void ColorMapper::set_maxCol(const Float4 &_maxCol) {
+void ColorMapper::set_maxCol(const Float4& _maxCol) {
   maxCol = _maxCol;
   calc_span_col();
 }
@@ -28,8 +30,8 @@ void ColorMapper::calc_max_abs() {
   maxAbsVal = (fabsf(maxVal) > fabsf(minVal)) ? fabsf(maxVal) : fabsf(minVal);
 }
 
-void ColorMapper::convert_to_rgba(const float *dataIn, const uint64_t nElem,
-                                  unsigned char *dataOut) const {
+void ColorMapper::convert_to_rgba(const float* dataIn, const uint64_t nElem,
+                                  unsigned char* dataOut) const {
   float spanTemp = maxVal - minVal;
   Float4 spanColTemp = maxCol - minCol;
 
@@ -46,8 +48,8 @@ void ColorMapper::convert_to_rgba(const float *dataIn, const uint64_t nElem,
 }
 
 // make diverging colormap centered around 0 or 1
-void ColorMapper::convert_to_divmap(const float *dataIn, const uint64_t nElem,
-                                    unsigned char *dataOut) const {
+void ColorMapper::convert_to_divmap(const float* dataIn, const uint64_t nElem,
+                                    unsigned char* dataOut) const {
   // scale whole array to range from to 0 to 1
   float temp;
   for (uint64_t iElem = 0; iElem < nElem; iElem++) {
@@ -70,8 +72,8 @@ void ColorMapper::convert_to_divmap(const float *dataIn, const uint64_t nElem,
   }
 }
 
-void ColorMapper::convert_to_map(const float *dataIn, const uint64_t nElem,
-                                 unsigned char *dataOut) const {
+void ColorMapper::convert_to_map(const float* dataIn, const uint64_t nElem,
+                                 unsigned char* dataOut) const {
   if (mapType == 0)
     convert_to_rgba(dataIn, nElem, dataOut);
   else if (mapType == 1) {
@@ -91,3 +93,5 @@ void ColorMapper::set_mapType(const uint8_t _mapType) {
     maxCol = {0.0f, 1.0f, 1.0f, 1.0f}; // set maxVal to bright red
   }
 }
+
+} // namespace opensaft

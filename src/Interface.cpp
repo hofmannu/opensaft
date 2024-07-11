@@ -1,8 +1,9 @@
 #include "Interface.h"
-
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_internal.h>
+
+namespace opensaft {
 
 static void glfw_error_callback(int error, const char* description) {
   fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -690,4 +691,7 @@ void Interface::MainDisplayCode() {
   ReconWindow();
 
   return;
+}
+
+
 }

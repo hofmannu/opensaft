@@ -1,6 +1,8 @@
 #include "Transducer.h"
 #include <stdexcept>
 
+namespace opensaft {
+
 void Transducer::set_focalDistance(const float _focalDistance) {
   if (_focalDistance < 0.0f)
     throw std::invalid_argument("focal distance must be positive");
@@ -20,4 +22,6 @@ void Transducer::set_rHole(const float _rHole) {
     throw std::invalid_argument("hole radius must be positive");
 
   rHole = _rHole;
+}
+
 }

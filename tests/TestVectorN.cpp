@@ -2,6 +2,8 @@
 #include <catch2/catch_all.hpp>
 #include "VectorN.h"
 
+using namespace opensaft;
+
 TEST_CASE("VectorN: testing constructors") {
 	// empty constructor
 	{

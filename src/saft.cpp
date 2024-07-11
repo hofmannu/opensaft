@@ -1,7 +1,8 @@
 #include "saft.h"
-
 #include <iostream>
 #include <thread>
+
+namespace opensaft {
 
 saft::saft() {
   processor_count = std::thread::hardware_concurrency();
@@ -27,10 +28,10 @@ void saft::crop() {
 
   // push res origin and size over from original dataset
   for (uint8_t iDim = 0; iDim < 3; iDim++) {
-    croppedData.set_origin(iDim,  // push origin
+    croppedData.set_origin(iDim, // push origin
                            preprocData.get_pos(idxMin[iDim], iDim));
 
-    croppedData.set_res(iDim,  // push resolution
+    croppedData.set_res(iDim, // push resolution
                         preprocData.get_res(iDim));
     // push new size
     croppedData.set_dim(iDim, idxMax[iDim] - idxMin[iDim] + 1);
@@ -130,3 +131,5 @@ void saft::remove_dc() {
 
   std::cout << "done!" << std::endl;
 }
+
+} // namespace opensaft

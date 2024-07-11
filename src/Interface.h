@@ -21,22 +21,24 @@
 #include <implot.h>
 #include <thread>
 
+namespace opensaft {
+
 class Interface {
 public:
   Interface(); // class constructor
 
-  void InitWindow(int *argcp, char **argv);
+  void InitWindow(int* argcp, char** argv);
 
 private:
   // all the pointers to things which we get from the saft main class
   saft recon;              // object for reconstruction
   std::thread reconThread; // reconstruction thread
 
-  Transducer *trans;
-  reconSettings *sett;
+  Transducer* trans;
+  reconSettings* sett;
   // todo swithc this guy to unique_ptr
-  volume *inputDataVol;
-  volume *reconDataVol;
+  volume* inputDataVol;
+  volume* reconDataVol;
 
   // for input dataset vizualization
   // todo make slicer a separate class
@@ -85,7 +87,7 @@ private:
   void SettingsWindow();   // window to define reconstruction settings
   void DataLoaderWindow(); // allows user to load a dataset from a file
   void ReconWindow();      // reconstruction part
-  void SetupWorkspace(ImGuiID &dockspace_id);
+  void SetupWorkspace(ImGuiID& dockspace_id);
 
   // flags which windows are supposed to be shown
   bool show_transducer_window = true;
@@ -97,13 +99,15 @@ private:
   bool isReconDone = false;
   bool isReconRunning = false;
 
-  const char *windowTitle = "opensaft";
+  const char* windowTitle = "opensaft";
   ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.10f); // bg color
 
-  void ImImagesc(const float *data, const uint64_t sizex, const uint64_t sizey,
-                 GLuint *out_texture, const ColorMapper myCMap);
+  void ImImagesc(const float* data, const uint64_t sizex, const uint64_t sizey,
+                 GLuint* out_texture, const ColorMapper myCMap);
 
-  const char *m_windowTitle = "opensaft"; //!< title of the window created
+  const char* m_windowTitle = "opensaft"; //!< title of the window created
   const Float4 m_clearColor{0.45f, 0.55f, 0.60f,
                             0.10f}; //!< bg color of the window
 };
+
+} // namespace opensaft
