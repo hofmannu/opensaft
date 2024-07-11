@@ -7,8 +7,8 @@
 
 // #include <GL/glew.h>
 #include "ColorMapper.h"
+#include "ReconSettings.h"
 #include "Transducer.h"
-#include "reconSettings.h"
 #include "saft.h"
 #include "volume.h"
 #include <GLFW/glfw3.h>
@@ -35,7 +35,7 @@ private:
   std::thread reconThread; // reconstruction thread
 
   Transducer* trans;
-  reconSettings* sett;
+  ReconSettings* sett;
   // todo swithc this guy to unique_ptr
   volume* inputDataVol;
   volume* reconDataVol;

@@ -2,13 +2,13 @@ target_sources(opensaft
 PUBLIC
 	ColorMapper.h
 	Interface.h
-	reconSettings.h
+	ReconSettings.h
 	Transducer.h
 	saft.h
 PRIVATE
 	ColorMapper.cpp
 	Interface.cpp
-	reconSettings.cpp
+	ReconSettings.cpp
 	Transducer.cpp
 	saft.cpp
 	)
