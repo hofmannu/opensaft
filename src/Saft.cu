@@ -1,4 +1,6 @@
-#include "saft.cuh"
+#include "Saft.cuh"
+
+namespace opensaft {
 
 // gpu kernel for SAFT
 __global__ void
@@ -96,7 +98,7 @@ SAFT(float* outputVol,        // reconstructed output volume [it, ix, iy]
 }
 
 // run the kernel but on the CPU
-void saft::saft_cpu() {
+void Saft::saft_cpu() {
 
   // declare a few varaibles for improved readabilit
   const uint32_t nT = croppedData.get_dim(0);
@@ -205,7 +207,7 @@ void saft::saft_cpu() {
 }
 
 // start the actual reconstruction
-void saft::recon() {
+void Saft::recon() {
   isRunning = 1;
   crop();      // perform cropping of dataset to user defined boundaries
   remove_dc(); // remove dc component of each individual a scan in croppedData
@@ -370,6 +372,8 @@ void saft::recon() {
 }
 
 // return a thread which runs the reconstruction
-std::thread saft::recon2thread() {
+std::thread Saft::recon2thread() {
   return std::thread([=] { recon(); });
 }
+
+} // namespace opensaft

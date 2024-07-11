@@ -8,8 +8,8 @@
 // #include <GL/glew.h>
 #include "ColorMapper.h"
 #include "ReconSettings.h"
+#include "Saft.h"
 #include "Transducer.h"
-#include "saft.h"
 #include "volume.h"
 #include <GLFW/glfw3.h>
 #include <ImGuiFileDialog.h>
@@ -31,7 +31,7 @@ public:
 
 private:
   // all the pointers to things which we get from the saft main class
-  saft recon;              // object for reconstruction
+  Saft recon;              // object for reconstruction
   std::thread reconThread; // reconstruction thread
 
   Transducer* trans;

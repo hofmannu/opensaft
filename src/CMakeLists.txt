@@ -4,13 +4,13 @@ PUBLIC
 	Interface.h
 	ReconSettings.h
 	Transducer.h
-	saft.h
+	Saft.h
 PRIVATE
 	ColorMapper.cpp
 	Interface.cpp
 	ReconSettings.cpp
 	Transducer.cpp
-	saft.cpp
+	Saft.cpp
 	)
 
 if (OPENSAFT_CUDA_SUPPORT)
@@ -18,10 +18,10 @@ if (OPENSAFT_CUDA_SUPPORT)
 	set_property(TARGET opensaft PROPERTY CUDA_ARCHITECTURES 50 75 86)
 	target_sources(opensaft
 	PUBLIC
-		saft.cuh
+		Saft.cuh
 		ColorMapper.cuh
 	PRIVATE
-		saft.cu
+		Saft.cu
 		ColorMapper.cu
 	)
 endif()

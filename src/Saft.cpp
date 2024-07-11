@@ -1,16 +1,16 @@
-#include "saft.h"
+#include "Saft.h"
 #include <iostream>
 #include <thread>
 
 namespace opensaft {
 
-saft::saft() {
+Saft::Saft() {
   processor_count = std::thread::hardware_concurrency();
-  printf("[saft] Found %d processor units... \n", processor_count);
+  printf("[Saft] Found %d processor units... \n", processor_count);
 }
 
 // crop the image to the field of view
-void saft::crop() {
+void Saft::crop() {
   // check if all max values are bigger then the minimum values, otherwise swap
   // them
   sett.sortCropping();
@@ -85,8 +85,8 @@ void* RemoveDc(void* threadarg) {
 
 // for each a scan first calculate the mean and then substract if from the
 // vector
-void saft::remove_dc() {
-  std::cout << "[saft] Removing DC offset... " << std::flush;
+void Saft::remove_dc() {
+  std::cout << "[Saft] Removing DC offset... " << std::flush;
 
   pthread_t threads[processor_count];
   pthread_attr_t attr;
