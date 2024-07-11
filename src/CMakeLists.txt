@@ -32,6 +32,7 @@ target_link_libraries(opensaft PUBLIC
 	${GLFW_LIBRARIES}
 	${cvolume_LIBRARIES}
 	${ImGUIFileDialog_LIBRARIES}
+	${backward_LIBRARIES}
 )
 
 target_include_directories(opensaft PUBLIC
@@ -41,4 +42,5 @@ target_include_directories(opensaft PUBLIC
 	${OPENGL_INCLUDE_DIRS}
 	${GLFW3_INCLUDE_DIR}
 	${cvolume_INCLUDE_DIR}
+	${backward_INCLUDE_DIR}
 )
