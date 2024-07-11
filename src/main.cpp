@@ -1,11 +1,10 @@
-// main starting point of the application
+// main starting point of the graphical user interface of the application
 
-#include <iostream>
-#include "interface.h"
+#include "Interface.h"
 
 int main(int *argcp, char**argv)
 {
-	interface GUI;
+	Interface GUI;
 	GUI.InitWindow(argcp, argv);
 	return 0;
 }

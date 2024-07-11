@@ -15,7 +15,11 @@ private:
 
 public:
 		// constructor
-		VectorN() = default;
+		VectorN() {
+			for (std::size_t i = 0; i < N; i++) {
+				data[i] = T();
+			}
+		}
 
 		VectorN(const T* _data) {
 			for (std::size_t i = 0; i < N; i++) {

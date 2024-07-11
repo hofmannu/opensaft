@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
 option(OPENSAFT_CUDA_SUPPORT "Enable CUDA support" OFF)
+option(OPENSAFT_TESTING "Build unit tests" ON)
 
 # prepare for cuda compilation
 if (OPENSAFT_CUDA_SUPPORT)
@@ -35,15 +36,21 @@ find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 find_library(H5CPP_LIB hdf5_cpp)
-find_library(H5_LIB hdf5)
+find_library(H5_LIB hdf5) # todo this sounds fishy that
 find_package(ImPlot REQUIRED)
 find_package(ImGUIFileDialog REQUIRED)
 find_package(CVolume REQUIRED)
 
+# main library holding the backbone of the application
 add_library(opensaft STATIC "")
+
 add_subdirectory(src/)
 
 find_library(TERM_LIB curses)
+
+if (OPENSAFT_TESTING)
+	add_subdirectory(tests)
+endif()
 
 # add an executable for the main graphical user interface
 add_executable(main_exp src/main.cpp)

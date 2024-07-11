@@ -6,34 +6,37 @@
 #pragma once
 
 // #include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <SDL2/SDL.h>
-
-#include <chrono>
-#include <ctime>
-#include <thread>
-
 #include "ColorMapper.h"
-#include "ImGuiFileDialog.h"
-#include "imgui.h"
-#include "imgui_impl_opengl3.h"
-#include "implot.h"
+#include "Transducer.h"
 #include "reconSettings.h"
 #include "saft.h"
-#include "Transducer.h"
 #include "volume.h"
+#include <GLFW/glfw3.h>
+#include <ImGuiFileDialog.h>
+#include <SDL2/SDL.h>
+#include <chrono>
+#include <ctime>
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include <implot.h>
+#include <thread>
 
-class interface {
- private:
+class Interface {
+public:
+  Interface(); // class constructor
+
+  void InitWindow(int *argcp, char **argv);
+
+private:
   // all the pointers to things which we get from the saft main class
-  saft recon; // object for reconstruction
+  saft recon;              // object for reconstruction
   std::thread reconThread; // reconstruction thread
 
   Transducer *trans;
-  reconSettings* sett;
+  reconSettings *sett;
   // todo swithc this guy to unique_ptr
-  volume* inputDataVol;
-  volume* reconDataVol;
+  volume *inputDataVol;
+  volume *reconDataVol;
 
   // for input dataset vizualization
   // todo make slicer a separate class
@@ -54,7 +57,7 @@ class interface {
   float xCropRawMm[2] = {0, 1};
   float zCropRawMm[2] = {0, 1};
   float yCropRawMm[2] = {0, 1};
-  float zStretchRaw = 4;  // how much should we stretch the preview in z
+  float zStretchRaw = 4; // how much should we stretch the preview in z
 
   // for output dataset vizualization
   int currSliceZRecon = 0;
@@ -63,7 +66,7 @@ class interface {
   GLuint reconSliceZ; // crossection through reconstructed volume along z normal
   ColorMapper reconDataMapper;
 
-  GLuint reconMipY;  // object used for reconstructed mip along y normal
+  GLuint reconMipY; // object used for reconstructed mip along y normal
   GLuint reconMipZ;
   ColorMapper reconMipMapper;
 
@@ -78,11 +81,11 @@ class interface {
 
   void MainDisplayCode();
 
-  void TransducerWindow();  // used to define transdcuer properties
-  void SettingsWindow();    // window to define reconstruction settings
-  void DataLoaderWindow();  // allows user to load a dataset from a file
-  void ReconWindow();       // reconstruction part
-  void SetupWorkspace(ImGuiID& dockspace_id);
+  void TransducerWindow(); // used to define transdcuer properties
+  void SettingsWindow();   // window to define reconstruction settings
+  void DataLoaderWindow(); // allows user to load a dataset from a file
+  void ReconWindow();      // reconstruction part
+  void SetupWorkspace(ImGuiID &dockspace_id);
 
   // flags which windows are supposed to be shown
   bool show_transducer_window = true;
@@ -103,9 +106,4 @@ class interface {
   const char *m_windowTitle = "opensaft"; //!< title of the window created
   const Float4 m_clearColor{0.45f, 0.55f, 0.60f,
                             0.10f}; //!< bg color of the window
-
-public:
-  interface(); // class constructor
-
-  void InitWindow(int *argcp, char **argv);
 };
