@@ -12,33 +12,28 @@ void color_mapper::set_minVal(const float _minVal) {
   calc_max_abs();
 }
 
-void color_mapper::set_minCol(const float* _minCol) {
-  for (uint8_t iCol = 0; iCol < 4; iCol++) minCol[iCol] = _minCol[iCol];
-
+void color_mapper::set_minCol(const Float4& _minCol) {
+  minCol = _minCol;
   calc_span_col();
 }
 
-void color_mapper::set_maxCol(const float* _maxCol) {
-  for (uint8_t iCol = 0; iCol < 4; iCol++) maxCol[iCol] = _maxCol[iCol];
-
+void color_mapper::set_maxCol(const Float4& _maxCol) {
+  maxCol = _maxCol;
   calc_span_col();
 }
 
 void color_mapper::calc_span_col() {
-  for (uint8_t idx = 0; idx < 4; idx++)
-    spanCol[idx] = maxCol[idx] - minCol[idx];
+  spanCol = maxCol - minCol;
 }
 
 void color_mapper::calc_max_abs() {
   maxAbsVal = (fabsf(maxVal) > fabsf(minVal)) ? fabsf(maxVal) : fabsf(minVal);
 }
 
-void color_mapper::convert_to_rgba(const float* dataIn, const uint64_t nElem,
-                                   unsigned char* dataOut) const {
+void color_mapper::convert_to_rgba(const float *dataIn, const uint64_t nElem,
+                                   unsigned char *dataOut) const {
   float spanTemp = maxVal - minVal;
-  float spanColTemp[4];
-  for (unsigned int iCol = 0; iCol < 4; iCol++)
-    spanColTemp[iCol] = maxCol[iCol] - minCol[iCol];
+  Float4 spanColTemp = maxCol - minCol;
 
   // scale whole array to range from to 0 to 1
   float temp;
@@ -53,13 +48,14 @@ void color_mapper::convert_to_rgba(const float* dataIn, const uint64_t nElem,
 }
 
 // make diverging colormap centered around 0 or 1
-void color_mapper::convert_to_divmap(const float* dataIn, const uint64_t nElem,
-                                     unsigned char* dataOut) const {
+void color_mapper::convert_to_divmap(const float *dataIn, const uint64_t nElem,
+                                     unsigned char *dataOut) const {
   // scale whole array to range from to 0 to 1
   float temp;
   for (uint64_t iElem = 0; iElem < nElem; iElem++) {
-    temp = abs(dataIn[iElem]) / maxAbsVal;  // scale to [0 ... 1]
-    if (temp > 1.0f) temp = 1.0f;
+    temp = abs(dataIn[iElem]) / maxAbsVal; // scale to [0 ... 1]
+    if (temp > 1.0f)
+      temp = 1.0f;
 
     if (dataIn[iElem] < 0) {
 #pragma unroll
@@ -76,8 +72,8 @@ void color_mapper::convert_to_divmap(const float* dataIn, const uint64_t nElem,
   }
 }
 
-void color_mapper::convert_to_map(const float* dataIn, const uint64_t nElem,
-                                  unsigned char* dataOut) const {
+void color_mapper::convert_to_map(const float *dataIn, const uint64_t nElem,
+                                  unsigned char *dataOut) const {
   if (mapType == 0)
     convert_to_rgba(dataIn, nElem, dataOut);
   else if (mapType == 1) {
@@ -88,16 +84,12 @@ void color_mapper::convert_to_map(const float* dataIn, const uint64_t nElem,
 
 void color_mapper::set_mapType(const uint8_t _mapType) {
   mapType = _mapType;
+  if (mapType == 0) {
+    minCol = 0.0f;
+    maxCol = 1.0f;
+  }
   if (mapType == 1) {
-    // set minVal to bright blue
-    minCol[0] = 1.0f;  // r
-    minCol[1] = 1.0f;  // g
-    minCol[2] = 0.0f;  // b
-    minCol[3] = 0.0f;  // alpha
-    // set maxVal to bright red
-    maxCol[0] = 0.0f;
-    maxCol[1] = 1.0f;
-    maxCol[2] = 1.0f;
-    maxCol[3] = 0.0f;
+    minCol = {1.0f, 1.0f, 0.0f, 1.0f}; // set minVal to bright blue
+    maxCol = {0.0f, 1.0f, 1.0f, 1.0f}; // set maxVal to bright red
   }
 }
