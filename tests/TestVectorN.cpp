@@ -2,8 +2,6 @@
 #include <catch2/catch_all.hpp>
 #include "VectorN.h"
 
-#define CATCH_CONFIG_MAIN
-
 TEST_CASE("VectorN: testing constructors") {
 	// empty constructor
 	{

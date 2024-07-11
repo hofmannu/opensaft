@@ -1,7 +1,7 @@
 find_package(Catch2 REQUIRED)
 
 add_executable(UnitTests
-	test_main.cpp
+	TestMain.cpp
 	TestVectorN.cpp
 	)
 
