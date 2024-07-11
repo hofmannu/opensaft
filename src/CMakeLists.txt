@@ -19,10 +19,10 @@ if (OPENSAFT_CUDA_SUPPORT)
 	target_sources(opensaft
 	PUBLIC
 		saft.cuh
-		colorMapper.cuh
+		ColorMapper.cuh
 	PRIVATE
 		saft.cu
-		colorMapper.cu
+		ColorMapper.cu
 	)
 endif()
 
