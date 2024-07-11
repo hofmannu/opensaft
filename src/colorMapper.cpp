@@ -1,5 +1,5 @@
 #include "colorMapper.h"
-
+#include "MathUtil.h"
 #include <math.h>
 
 void color_mapper::set_maxVal(const float _maxVal) {
@@ -43,15 +43,9 @@ void color_mapper::convert_to_rgba(const float* dataIn, const uint64_t nElem,
   // scale whole array to range from to 0 to 1
   float temp;
   for (uint64_t iElem = 0; iElem < nElem; iElem++) {
-    temp = (dataIn[iElem] - minVal) / spanTemp;  // scale to [0 ... 1]
+    temp = (dataIn[iElem] - minVal) / spanTemp; // scale to [0 ... 1]
+    temp = Clamp(temp, 0.0f, 1.0f);
 
-    // limit temp to 0 ... 1
-    if (temp < 0)
-      temp = 0;
-    else if (temp > 1)
-      temp = 1;
-
-#pragma unroll
     for (unsigned char iCol = 0; iCol < 4; iCol++)
       dataOut[iCol + iElem * 4] =
           (minCol[iCol] + temp * spanColTemp[iCol]) * 255;
