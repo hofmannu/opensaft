@@ -415,7 +415,7 @@ void interface::DataLoaderWindow() {
 // helper function to display stuff
 void interface::ImImagesc(const float* data, const uint64_t sizex,
                           const uint64_t sizey, GLuint* out_texture,
-                          const color_mapper myCMap) {
+                          const ColorMapper myCMap) {
   glDeleteTextures(1, out_texture);
 
   // Create an OpenGL texture identifier

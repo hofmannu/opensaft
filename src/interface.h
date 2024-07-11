@@ -14,7 +14,7 @@
 #include <thread>
 
 #include "ImGuiFileDialog.h"
-#include "colorMapper.h"
+#include "ColorMapper.h"
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 #include "implot.h"
@@ -40,13 +40,13 @@ class interface {
   // todo make slicer a separate class
   int currSliceZ = 0;
   int currSliceY = 0;
-  color_mapper inDataMapper;
+  ColorMapper inDataMapper;
   GLuint inDataTexture;
   GLuint inDataTextureSlice;
 
   GLuint inDataMipZ;
   GLuint inDataMipY;
-  color_mapper mipRawMapper;
+  ColorMapper mipRawMapper;
 
   // cropping range which we apply to mips of raw datasets
   float xCropRaw[2] = {0, 1};
@@ -60,15 +60,13 @@ class interface {
   // for output dataset vizualization
   int currSliceZRecon = 0;
   int currSliceYRecon = 0;
-  GLuint
-      reconSliceY;  // crossection through reconstructed volume along y normal
-  GLuint
-      reconSliceZ;  // crossection through reconstructed volume along z normal
-  color_mapper reconDataMapper;
+  GLuint reconSliceY; // crossection through reconstructed volume along y normal
+  GLuint reconSliceZ; // crossection through reconstructed volume along z normal
+  ColorMapper reconDataMapper;
 
   GLuint reconMipY;  // object used for reconstructed mip along y normal
   GLuint reconMipZ;
-  color_mapper reconMipMapper;
+  ColorMapper reconMipMapper;
 
   // cropping range which we apply to mips of reconstructed datasets
   float zCropRecon[2] = {0.0f, 1.0f};
@@ -97,8 +95,8 @@ class interface {
   bool isReconDone = false;
   bool isReconRunning = false;
 
-  const char* windowTitle = "opensaft";
-  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.10f);  // bg color
+  const char *windowTitle = "opensaft";
+  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.10f); // bg color
 
   void ImImagesc(const float* data, const uint64_t sizex, const uint64_t sizey,
                  GLuint* out_texture, const color_mapper myCMap);
@@ -110,5 +108,5 @@ class interface {
  public:
   interface();  // class constructor
 
-  void InitWindow(int* argcp, char** argv);
+  void InitWindow(int *argcp, char **argv);
 };

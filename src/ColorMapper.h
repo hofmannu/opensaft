@@ -11,7 +11,7 @@
 #include <cstdint>
 #include <cstdio>
 
-class color_mapper {
+class ColorMapper {
 private:
   float minVal = -1.0f; //!< minimum value in colormap
   float maxVal = 1.0f;  //!< maximum value in colormap
