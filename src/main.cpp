@@ -1,12 +1,15 @@
-#include <iostream>
-#include "interface.h"
+// main starting point of the graphical user interface of the application
 
-using namespace std;
+#include "Interface.h"
+#include <backward.hpp>
+
+backward::SignalHandling sh{};
+
+using namespace opensaft;
 
 int main(int *argcp, char**argv)
 {
-	interface GUI;
+	Interface GUI;
 	GUI.InitWindow(argcp, argv);
-
 	return 0;
 }

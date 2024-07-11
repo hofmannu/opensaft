@@ -1,14 +1,15 @@
-#include "interface.h"
-
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include "Interface.h"
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <imgui_internal.h>
+
+namespace opensaft {
 
 static void glfw_error_callback(int error, const char* description) {
   fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-interface::interface() {
+Interface::Interface() {
   // get all subdefinitions of saft objects as pointers
   trans = recon.get_ptrans();  // pointer to transducer class
   sett = recon.get_psett();    // pointer to reconstruction settings
@@ -29,14 +30,14 @@ static void HelpMarker(const char* desc) {
   return;
 }
 
-void interface::SetupWorkspace(ImGuiID& dockspace_id) {
+void Interface::SetupWorkspace(ImGuiID& dockspace_id) {
   ImGui::DockBuilderRemoveNode(dockspace_id);
   ImGuiDockNodeFlags dockSpaceFlags = 0;
   ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_DockSpace);
   ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetMainViewport()->Size);
 }
 
-void interface::InitWindow(int* argcp, char** argv) {
+void Interface::InitWindow(int* argcp, char** argv) {
   glfwSetErrorCallback(glfw_error_callback);
   if (!glfwInit()) {
     throw std::runtime_error("Failed to initialize GLFW");
@@ -141,7 +142,7 @@ void interface::InitWindow(int* argcp, char** argv) {
 }
 
 // window to define all the transducer settings
-void interface::TransducerWindow() {
+void Interface::TransducerWindow() {
   ImGui::Begin("Transducer properties", &show_transducer_window);
 
   ImGui::Columns(1);
@@ -161,7 +162,7 @@ void interface::TransducerWindow() {
 }
 
 // defining all the reconstruction settings
-void interface::SettingsWindow() {
+void Interface::SettingsWindow() {
   ImGui::Begin("Reconstruction settings", &show_settings_window);
 
   // cropping applied along x y and t
@@ -198,7 +199,7 @@ void interface::SettingsWindow() {
 }
 
 // interfacing window to conveniently load data from h5 files
-void interface::DataLoaderWindow() {
+void Interface::DataLoaderWindow() {
   ImGui::Begin("Data Loader", &show_data_loader);
 
   if (ImGui::Button("Load data")) {
@@ -413,9 +414,9 @@ void interface::DataLoaderWindow() {
 }
 
 // helper function to display stuff
-void interface::ImImagesc(const float* data, const uint64_t sizex,
+void Interface::ImImagesc(const float* data, const uint64_t sizex,
                           const uint64_t sizey, GLuint* out_texture,
-                          const color_mapper myCMap) {
+                          const ColorMapper myCMap) {
   glDeleteTextures(1, out_texture);
 
   // Create an OpenGL texture identifier
@@ -441,7 +442,7 @@ void interface::ImImagesc(const float* data, const uint64_t sizex,
 }
 
 // starts the reconstruction and takes care of previews of reconstructed volumes
-void interface::ReconWindow() {
+void Interface::ReconWindow() {
   ImGui::Begin("Reconstruction", &show_recon_window);
 
   if (!recon.get_isRunning()) {
@@ -683,11 +684,14 @@ void interface::ReconWindow() {
 }
 
 // main loop which we run through to update ImGui
-void interface::MainDisplayCode() {
+void Interface::MainDisplayCode() {
   TransducerWindow();
   SettingsWindow();
   DataLoaderWindow();
   ReconWindow();
 
   return;
+}
+
+
 }

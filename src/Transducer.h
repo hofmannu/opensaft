@@ -5,11 +5,14 @@
         Date: 27.12.2020
 */
 
+#pragma once
+
 #include <math.h>
 
-#pragma once
-class transducer {
- public:
+namespace opensaft {
+
+class Transducer {
+public:
   /// \brief returns
   [[nodiscard]] float* get_pfocalDistance() { return &focalDistance; };
   [[nodiscard]] float* get_prAperture() { return &rAperture; };
@@ -29,8 +32,10 @@ class transducer {
     return asin(rAperture / focalDistance);
   };
 
- private:
-  float focalDistance = 7.0f;  // focal distance of transducer [mm]
-  float rAperture = 3.2f;      // radius of aperture of transducer [mm]
-  float rHole = 0.5f;          // radius of central hole of transducer [mm]
+private:
+  float focalDistance = 7.0f; //!< focal distance of transducer [mm]
+  float rAperture = 3.2f;     //!< radius of aperture of transducer [mm]
+  float rHole = 0.5f;         //!< radius of central hole of transducer [mm]
 };
+
+} // namespace opensaft

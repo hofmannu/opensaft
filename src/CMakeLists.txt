@@ -1,16 +1,16 @@
 target_sources(opensaft
 PUBLIC
-	colorMapper.h
-	interface.h
-	reconSettings.h
-	transducer.h
-	saft.h
+	ColorMapper.h
+	Interface.h
+	ReconSettings.h
+	Transducer.h
+	Saft.h
 PRIVATE
-	colorMapper.cpp
-	interface.cpp
-	reconSettings.cpp
-	transducer.cpp
-	saft.cpp
+	ColorMapper.cpp
+	Interface.cpp
+	ReconSettings.cpp
+	Transducer.cpp
+	Saft.cpp
 	)
 
 if (OPENSAFT_CUDA_SUPPORT)
@@ -18,11 +18,11 @@ if (OPENSAFT_CUDA_SUPPORT)
 	set_property(TARGET opensaft PROPERTY CUDA_ARCHITECTURES 50 75 86)
 	target_sources(opensaft
 	PUBLIC
-		saft.cuh
-		colorMapper.cuh
+		Saft.cuh
+		ColorMapper.cuh
 	PRIVATE
-		saft.cu
-		colorMapper.cu
+		Saft.cu
+		ColorMapper.cu
 	)
 endif()
 
@@ -32,6 +32,7 @@ target_link_libraries(opensaft PUBLIC
 	${GLFW_LIBRARIES}
 	${cvolume_LIBRARIES}
 	${ImGUIFileDialog_LIBRARIES}
+	${backward_LIBRARIES}
 )
 
 target_include_directories(opensaft PUBLIC
@@ -41,4 +42,5 @@ target_include_directories(opensaft PUBLIC
 	${OPENGL_INCLUDE_DIRS}
 	${GLFW3_INCLUDE_DIR}
 	${cvolume_INCLUDE_DIR}
+	${backward_INCLUDE_DIR}
 )

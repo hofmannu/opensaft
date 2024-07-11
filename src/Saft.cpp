@@ -1,15 +1,16 @@
-#include "saft.h"
-
+#include "Saft.h"
 #include <iostream>
 #include <thread>
 
-saft::saft() {
+namespace opensaft {
+
+Saft::Saft() {
   processor_count = std::thread::hardware_concurrency();
-  printf("[saft] Found %d processor units... \n", processor_count);
+  printf("[Saft] Found %d processor units... \n", processor_count);
 }
 
 // crop the image to the field of view
-void saft::crop() {
+void Saft::crop() {
   // check if all max values are bigger then the minimum values, otherwise swap
   // them
   sett.sortCropping();
@@ -27,10 +28,10 @@ void saft::crop() {
 
   // push res origin and size over from original dataset
   for (uint8_t iDim = 0; iDim < 3; iDim++) {
-    croppedData.set_origin(iDim,  // push origin
+    croppedData.set_origin(iDim, // push origin
                            preprocData.get_pos(idxMin[iDim], iDim));
 
-    croppedData.set_res(iDim,  // push resolution
+    croppedData.set_res(iDim, // push resolution
                         preprocData.get_res(iDim));
     // push new size
     croppedData.set_dim(iDim, idxMax[iDim] - idxMin[iDim] + 1);
@@ -84,8 +85,8 @@ void* RemoveDc(void* threadarg) {
 
 // for each a scan first calculate the mean and then substract if from the
 // vector
-void saft::remove_dc() {
-  std::cout << "[saft] Removing DC offset... " << std::flush;
+void Saft::remove_dc() {
+  std::cout << "[Saft] Removing DC offset... " << std::flush;
 
   pthread_t threads[processor_count];
   pthread_attr_t attr;
@@ -130,3 +131,5 @@ void saft::remove_dc() {
 
   std::cout << "done!" << std::endl;
 }
+
+} // namespace opensaft

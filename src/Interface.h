@@ -6,32 +6,36 @@
 #pragma once
 
 // #include <GL/glew.h>
+#include "ColorMapper.h"
+#include "ReconSettings.h"
+#include "Saft.h"
+#include "Transducer.h"
+#include "volume.h"
 #include <GLFW/glfw3.h>
+#include <ImGuiFileDialog.h>
 #include <SDL2/SDL.h>
-
 #include <chrono>
 #include <ctime>
+#include <imgui.h>
+#include <imgui_impl_opengl3.h>
+#include <implot.h>
 #include <thread>
 
-#include "ImGuiFileDialog.h"
-#include "colorMapper.h"
-#include "imgui.h"
-#include "imgui_impl_opengl3.h"
-#include "implot.h"
-#include "reconSettings.h"
-#include "saft.h"
-#include "transducer.h"
-#include "volume.h"
+namespace opensaft {
 
-class interface {
- private:
+class Interface {
+public:
+  Interface(); // class constructor
+
+  void InitWindow(int* argcp, char** argv);
+
+private:
   // all the pointers to things which we get from the saft main class
-  saft recon;  // object for reconstruction
-  std::thread
-      reconThread;  // this is the thread in which we run the reconstruction
+  Saft recon;              // object for reconstruction
+  std::thread reconThread; // reconstruction thread
 
-  transducer* trans;
-  reconSettings* sett;
+  Transducer* trans;
+  ReconSettings* sett;
   // todo swithc this guy to unique_ptr
   volume* inputDataVol;
   volume* reconDataVol;
@@ -40,13 +44,13 @@ class interface {
   // todo make slicer a separate class
   int currSliceZ = 0;
   int currSliceY = 0;
-  color_mapper inDataMapper;
+  ColorMapper inDataMapper;
   GLuint inDataTexture;
   GLuint inDataTextureSlice;
 
   GLuint inDataMipZ;
   GLuint inDataMipY;
-  color_mapper mipRawMapper;
+  ColorMapper mipRawMapper;
 
   // cropping range which we apply to mips of raw datasets
   float xCropRaw[2] = {0, 1};
@@ -55,20 +59,18 @@ class interface {
   float xCropRawMm[2] = {0, 1};
   float zCropRawMm[2] = {0, 1};
   float yCropRawMm[2] = {0, 1};
-  float zStretchRaw = 4;  // how much should we stretch the preview in z
+  float zStretchRaw = 4; // how much should we stretch the preview in z
 
   // for output dataset vizualization
   int currSliceZRecon = 0;
   int currSliceYRecon = 0;
-  GLuint
-      reconSliceY;  // crossection through reconstructed volume along y normal
-  GLuint
-      reconSliceZ;  // crossection through reconstructed volume along z normal
-  color_mapper reconDataMapper;
+  GLuint reconSliceY; // crossection through reconstructed volume along y normal
+  GLuint reconSliceZ; // crossection through reconstructed volume along z normal
+  ColorMapper reconDataMapper;
 
-  GLuint reconMipY;  // object used for reconstructed mip along y normal
+  GLuint reconMipY; // object used for reconstructed mip along y normal
   GLuint reconMipZ;
-  color_mapper reconMipMapper;
+  ColorMapper reconMipMapper;
 
   // cropping range which we apply to mips of reconstructed datasets
   float zCropRecon[2] = {0.0f, 1.0f};
@@ -81,10 +83,10 @@ class interface {
 
   void MainDisplayCode();
 
-  void TransducerWindow();  // used to define transdcuer properties
-  void SettingsWindow();    // window to define reconstruction settings
-  void DataLoaderWindow();  // allows user to load a dataset from a file
-  void ReconWindow();       // reconstruction part
+  void TransducerWindow(); // used to define transdcuer properties
+  void SettingsWindow();   // window to define reconstruction settings
+  void DataLoaderWindow(); // allows user to load a dataset from a file
+  void ReconWindow();      // reconstruction part
   void SetupWorkspace(ImGuiID& dockspace_id);
 
   // flags which windows are supposed to be shown
@@ -98,17 +100,14 @@ class interface {
   bool isReconRunning = false;
 
   const char* windowTitle = "opensaft";
-  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.10f);  // bg color
+  ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 0.10f); // bg color
 
   void ImImagesc(const float* data, const uint64_t sizex, const uint64_t sizey,
-                 GLuint* out_texture, const color_mapper myCMap);
+                 GLuint* out_texture, const ColorMapper myCMap);
 
-  const char* m_windowTitle = "opensaft";  //!< title of the window created
-  const float m_clearColor[4] = {0.45f, 0.55f, 0.60f,
-                                 0.10f};  //!< background color of the window
-
- public:
-  interface();  // class constructor
-
-  void InitWindow(int* argcp, char** argv);
+  const char* m_windowTitle = "opensaft"; //!< title of the window created
+  const Float4 m_clearColor{0.45f, 0.55f, 0.60f,
+                            0.10f}; //!< bg color of the window
 };
+
+} // namespace opensaft
