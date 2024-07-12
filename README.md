@@ -56,6 +56,16 @@ The last command will generate an executable called `main_exp`.
 
 SAFT induces a strong absorption bias over depth. Absorbance "reconstructed" at different depths can therefore never be compared in a quantitative manner. It also tends to amplify low frequency signals which is the reason why most groups so far reconstruct different freqeucny bands independently (feature requires implementation). In planes very distant from the focus blurring is unavoidable due to the large shape of the reconstruction arcs.
 
+## Documentation
+
+The documentation should be running with `vitepress` and is compiled into a static website that is also published to github pages. All documentation is written in markdown and can be found in the doc folder.
+
+To run the documentation locally, run the following commands:
+
+```bash
+npm run docs:dev
+```
+
 ## Coding conventions
 
 - no `return` statement at the end of void functions
