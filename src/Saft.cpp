@@ -1,4 +1,6 @@
 #include "Saft.h"
+#include "Util/Logger.h"
+#include <format>
 #include <iostream>
 #include <thread>
 
@@ -6,7 +8,8 @@ namespace opensaft {
 
 Saft::Saft() {
   processor_count = std::thread::hardware_concurrency();
-  printf("[Saft] Found %d processor units... \n", processor_count);
+  Logger::Log(
+      std::format("[Saft] Found {} processor units...", processor_count));
 }
 
 // crop the image to the field of view
@@ -86,7 +89,7 @@ void* RemoveDc(void* threadarg) {
 // for each a scan first calculate the mean and then substract if from the
 // vector
 void Saft::remove_dc() {
-  std::cout << "[Saft] Removing DC offset... " << std::flush;
+  Logger::Log("[Saft] Removing DC offset... ");
 
   pthread_t threads[processor_count];
   pthread_attr_t attr;
@@ -129,7 +132,7 @@ void Saft::remove_dc() {
     }
   }
 
-  std::cout << "done!" << std::endl;
+  Logger::Log("[SAFT} DC offset removed...");
 }
 
 } // namespace opensaft
