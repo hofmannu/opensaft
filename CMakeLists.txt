@@ -53,6 +53,27 @@ add_library(opensaft STATIC "")
 
 add_subdirectory(src/)
 
+target_link_libraries(opensaft PUBLIC
+	${ImGUI_LIBRARIES}
+	${implot_LIBRARIES}
+	${GLFW_LIBRARIES}
+	${cvolume_LIBRARIES}
+	${ImGUIFileDialog_LIBRARIES}
+	${backward_LIBRARIES}
+)
+
+target_include_directories(opensaft PUBLIC
+	${CMAKE_SOURCE_DIR}/src
+	${ImGUI_INCLUDE_DIR}
+	${ImPlot_INCLUDE_DIR}
+	${ImGUIFileDialog_INCLUDE_DIR}
+	${OPENGL_INCLUDE_DIRS}
+	${GLFW3_INCLUDE_DIR}
+	${cvolume_INCLUDE_DIR}
+	${backward_INCLUDE_DIR}
+)
+
+
 find_library(TERM_LIB curses)
 
 if (OPENSAFT_TESTING)
