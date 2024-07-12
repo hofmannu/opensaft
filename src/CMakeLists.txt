@@ -26,21 +26,4 @@ if (OPENSAFT_CUDA_SUPPORT)
 	)
 endif()
 
-target_link_libraries(opensaft PUBLIC
-	${ImGUI_LIBRARIES}
-	${implot_LIBRARIES}
-	${GLFW_LIBRARIES}
-	${cvolume_LIBRARIES}
-	${ImGUIFileDialog_LIBRARIES}
-	${backward_LIBRARIES}
-)
-
-target_include_directories(opensaft PUBLIC
-	${ImGUI_INCLUDE_DIR}
-	${ImPlot_INCLUDE_DIR}
-	${ImGUIFileDialog_INCLUDE_DIR}
-	${OPENGL_INCLUDE_DIRS}
-	${GLFW3_INCLUDE_DIR}
-	${cvolume_INCLUDE_DIR}
-	${backward_INCLUDE_DIR}
-)
+add_subdirectory(Util)
