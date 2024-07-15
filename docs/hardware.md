@@ -14,3 +14,16 @@ Optoacoustic imaging consists out of several important key components which will
 - largely vary in frequency response
 - ideally broadband for high resolution
 - microscopy reaches up to 100 MHz, tomography typically 1-10 MHz
+
+### Piezoelectric materials
+
+- generate voltage when receiving.pressure
+- generate pressure when voltage is applied
+- different materials out there with different sensitivities, shapes, frequency responses
+- shapable materials can be focused through mounting on a spherical surface
+- most materials require acoustic lenses though (difficult to model, invoke reflections)
+
+### Companies selling transducers
+
+- [Precision Acoustics](https://www.acoustics.co.uk/)
+- [Sonaxis](http://www.sonaxis.com/)
