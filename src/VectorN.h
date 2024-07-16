@@ -4,6 +4,8 @@
 #include <initializer_list>
 #include <stdexcept>
 
+#pragma once
+
 namespace opensaft {
 
 template <typename T, std::size_t N>
@@ -121,6 +123,9 @@ public:
   bool operator!=(const VectorN& other) const { return !(*this == other); }
 };
 
+typedef VectorN<float, 3> Float3;
 typedef VectorN<float, 4> Float4;
+
+typedef VectorN<std::size_t, 3> Size3;
 
 } // namespace opensaft
