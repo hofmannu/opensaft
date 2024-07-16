@@ -27,3 +27,4 @@ if (OPENSAFT_CUDA_SUPPORT)
 endif()
 
 add_subdirectory(Util)
+add_subdirectory(Memory)

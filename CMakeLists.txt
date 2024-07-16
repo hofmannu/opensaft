@@ -44,7 +44,6 @@ find_library(H5CPP_LIB hdf5_cpp)
 find_library(H5_LIB hdf5) # todo this sounds fishy that
 find_package(ImPlot REQUIRED)
 find_package(ImGUIFileDialog REQUIRED)
-find_package(CVolume REQUIRED)
 find_package(Backward REQUIRED)
 
 # main library holding the backbone of the application
