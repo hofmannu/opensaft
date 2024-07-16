@@ -38,9 +38,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 # find dependencies (most of them are handled through FetchContent)
 find_package(ImGUI REQUIRED)
-find_package(glfw3 REQUIRED)
+find_package(GLFW REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(SDL2 REQUIRED)
 find_library(H5CPP_LIB hdf5_cpp)
 find_library(H5_LIB hdf5) # todo this sounds fishy that
 find_package(ImPlot REQUIRED)

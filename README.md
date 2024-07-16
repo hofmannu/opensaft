@@ -21,17 +21,18 @@ Required packages:
 - a capable C++ compiler which can be consumed by `CMake`
 - `CUDA` for GPU acceleration (can be disabled, not required)
 - `hdf5` for dataset import and export
+- `libxrandr`, `libxinerama`, `libxcursor`, `libxi`, `libgl1-mesa-dev`: used for GUI framework
 
 Package installation command ArchLinux:
 
 ```bash
-pacman -S hdf5
+pacman -S hdf5 libxrandr libxinerama
 ```
 
 Package installation command Ubuntu:
 
 ```bash
-apt-get install libhdf5-serial-dev
+apt-get install libhdf5-serial-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev
 ```
 
 Many other dependencies are directly managed through CMake based on `FetchContent`.
