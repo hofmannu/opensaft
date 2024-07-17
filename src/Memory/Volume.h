@@ -10,11 +10,10 @@ namespace opensaft {
 
 enum class Dimension { X, Y, Z };
 
-class Volume : std::vector<float> {
+class Volume : public std::vector<float> {
 public:
-  Volume(const Size3& dims) : m_dims(dims) {
-    resize(dims[0] * dims[1] * dims[2]);
-  }
+  Volume(const Size3& dims)
+      : std::vector<float>(dims.InnerProduct(), 0.0f), m_dims(dims) {}
 
   /// volumetric access operators (const and non const)
   [[nodiscard]] float& operator()(const std::size_t x, const std::size_t y,
@@ -25,6 +24,11 @@ public:
   [[nodiscard]] float operator()(const std::size_t x, const std::size_t y,
                                  const std::size_t z) const {
     return at(x + m_dims[0] * (y + m_dims[1] * z));
+  }
+
+  void operator=(const float& setPoint) {
+    for (auto& elem : *this)
+      elem = setPoint;
   }
 
   /// \return side length along that dimension
@@ -52,8 +56,14 @@ public:
     return *std::max_element(begin(), end());
   }
 
+  /// \returns the resolution of the vector along xzy
+  [[nodiscard]] Float3 get_res() const { return m_res; }
+
   /// \returns the resolution of the voxel along a specified dimension
   [[nodiscard]] float get_res(const uint8_t iDim) const { return m_res[iDim]; }
+
+  /// \returns the dimensions of the volume as a 3 elem vector
+  [[nodiscard]] Size3 get_dims() const { return m_dims; }
 
   /// \returns the size of the volume in voxels along a certain dimension
   [[nodiscard]] std::size_t get_dim(const uint8_t iDim) const {
@@ -62,6 +72,22 @@ public:
 
   [[nodiscard]] float get_pos(const std::size_t idx, const uint8_t iDim) const {
     return get_minPos(iDim) + get_res(iDim) * (idx + 0.5f);
+  }
+
+  [[nodiscard]] Float3 get_center() const { return m_center; }
+
+  [[nodiscard]] bool operator==(const Volume& other) {
+    if (m_center != other.get_center())
+      return false;
+    if (m_res != other.get_res())
+      return false;
+    if (m_dims != other.get_dims())
+      return false;
+    for (std::size_t iElem = 0; iElem < size(); iElem++) {
+      if ((*this)[iElem] != other[iElem])
+        return false;
+    }
+    return true;
   }
 
   /// \returns reads the volume from a file (shouldbe externalized later)

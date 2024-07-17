@@ -3,6 +3,7 @@ find_package(Catch2 REQUIRED)
 add_executable(UnitTests
 	TestMain.cpp
 	TestVectorN.cpp
+	TestVolume.cpp
 	)
 
 target_link_libraries(UnitTests
