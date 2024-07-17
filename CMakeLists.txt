@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.12...3.28)
 project(opensaft
 	VERSION 1.0
 	DESCRIPTION "Open source implementation of 3D SAFT"
-	LANGUAGES CXX)
+	LANGUAGES CXX CUDA)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
@@ -12,11 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 if (NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE RelWithDebInfo)
 endif()
-message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
-
 
 option(OPENSAFT_CUDA_SUPPORT "Enable CUDA support" OFF)
 option(OPENSAFT_TESTING "Build unit tests" ON)
+option(OPENSAFT_GUI "build graphical user interface alongside" OFF)
 
 # prepare for cuda compilation
 if (OPENSAFT_CUDA_SUPPORT)
@@ -37,14 +36,8 @@ set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -x cu -rdc=true -ftz=false -prec-div=tru
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 # find dependencies (most of them are handled through FetchContent)
-find_package(ImGUI REQUIRED)
-find_package(GLFW REQUIRED)
-find_package(OpenGL REQUIRED)
 find_library(H5CPP_LIB hdf5_cpp)
 find_library(H5_LIB hdf5) # todo this sounds fishy that
-find_package(ImPlot REQUIRED)
-find_package(ImGUIFileDialog REQUIRED)
-find_package(Backward REQUIRED)
 
 # main library holding the backbone of the application
 add_library(opensaft STATIC "")
@@ -52,24 +45,56 @@ add_library(opensaft STATIC "")
 add_subdirectory(src/)
 
 target_link_libraries(opensaft PUBLIC
-	${ImGUI_LIBRARIES}
-	${implot_LIBRARIES}
-	${GLFW_LIBRARIES}
-	${cvolume_LIBRARIES}
-	${ImGUIFileDialog_LIBRARIES}
-	${backward_LIBRARIES}
 )
 
 target_include_directories(opensaft PUBLIC
 	${CMAKE_SOURCE_DIR}/src
-	${ImGUI_INCLUDE_DIR}
-	${ImPlot_INCLUDE_DIR}
-	${ImGUIFileDialog_INCLUDE_DIR}
-	${OPENGL_INCLUDE_DIRS}
-	${GLFW3_INCLUDE_DIR}
-	${cvolume_INCLUDE_DIR}
-	${backward_INCLUDE_DIR}
 )
+
+if (OPENSAFT_GUI)
+
+	add_library(opensaft-gui)
+
+	find_package(ImGUI REQUIRED)
+	find_package(GLFW REQUIRED)
+	find_package(OpenGL REQUIRED)
+	find_package(ImPlot REQUIRED)
+	find_package(ImGUIFileDialog REQUIRED)
+	find_package(Backward REQUIRED)
+
+
+	target_link_libraries(opensaft-gui PUBLIC
+		${ImGUI_LIBRARIES}
+		${implot_LIBRARIES}
+		${GLFW_LIBRARIES}
+		${cvolume_LIBRARIES}
+		${ImGUIFileDialog_LIBRARIES}
+		${backward_LIBRARIES}
+	)
+
+	target_include_directories(opensaft PUBLIC
+		${CMAKE_SOURCE_DIR}/src
+		${ImGUI_INCLUDE_DIR}
+		${ImPlot_INCLUDE_DIR}
+		${ImGUIFileDialog_INCLUDE_DIR}
+		${OPENGL_INCLUDE_DIRS}
+		${GLFW3_INCLUDE_DIR}
+		${cvolume_INCLUDE_DIR}
+		${backward_INCLUDE_DIR}
+	)
+
+
+	# add an executable for the main graphical user interface
+	add_executable(OpensaftGui src/main.cpp)
+	if (OPENSAFT_CUDA_SUPPORT)
+		set_property(TARGET OpensaftGui PROPERTY CUDA_SEPARABLE_COMPILATION ON)
+		set_property(TARGET OpensaftGui PROPERTY CUDA_ARCHITECTURES 50 75 86)
+	endif()
+	target_link_libraries(OpensaftGui PUBLIC opensaft-gui)
+
+	install(TARGETS OpensaftGui DESTINATION bin)
+
+endif (OPENSAFT_GUI)
 
 
 find_library(TERM_LIB curses)
@@ -78,12 +103,4 @@ if (OPENSAFT_TESTING)
 	add_subdirectory(tests)
 endif()
 
-# add an executable for the main graphical user interface
-add_executable(main_exp src/main.cpp)
-if (OPENSAFT_CUDA_SUPPORT)
-	set_property(TARGET main_exp PROPERTY CUDA_SEPARABLE_COMPILATION ON)
-	set_property(TARGET main_exp PROPERTY CUDA_ARCHITECTURES 50 75 86)
-endif()
-target_link_libraries(main_exp PUBLIC opensaft)
 
-install(TARGETS main_exp DESTINATION bin)

@@ -7,10 +7,10 @@
 
 // #include <GL/glew.h>
 #include "ColorMapper.h"
+#include "Memory/Volume.h"
 #include "ReconSettings.h"
 #include "Saft.h"
 #include "Transducer.h"
-#include "volume.h"
 #include <GLFW/glfw3.h>
 #include <ImGuiFileDialog.h>
 #include <SDL2/SDL.h>
@@ -37,8 +37,8 @@ private:
   Transducer* trans;
   ReconSettings* sett;
   // todo swithc this guy to unique_ptr
-  volume* inputDataVol;
-  volume* reconDataVol;
+  Volume* inputDataVol;
+  Volume* reconDataVol;
 
   // for input dataset vizualization
   // todo make slicer a separate class

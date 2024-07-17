@@ -1,13 +1,9 @@
 target_sources(opensaft
 PUBLIC
-	ColorMapper.h
-	Interface.h
 	ReconSettings.h
 	Transducer.h
 	Saft.h
 PRIVATE
-	ColorMapper.cpp
-	Interface.cpp
 	ReconSettings.cpp
 	Transducer.cpp
 	Saft.cpp
@@ -19,12 +15,17 @@ if (OPENSAFT_CUDA_SUPPORT)
 	target_sources(opensaft
 	PUBLIC
 		Saft.cuh
-		ColorMapper.cuh
+		Slicer/ColorMapper.cuh
 	PRIVATE
 		Saft.cu
-		ColorMapper.cu
+		Slicer/ColorMapper.cu
 	)
 endif()
 
 add_subdirectory(Util)
 add_subdirectory(Memory)
+
+if (OPENSAFT_GUI)
+	add_subdirectory(Gui)
+	add_subdirectory(Slicer)
+endif ()
