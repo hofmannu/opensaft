@@ -5,6 +5,7 @@ add_executable(UnitTests
 	TestUltrasoundSignals.cpp
 	TestVectorN.cpp
 	TestVolume.cpp
+	TestTimer.cpp
 	)
 
 target_link_libraries(UnitTests
