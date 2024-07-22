@@ -1,5 +1,9 @@
 # opensaft
 
+::: warning
+This project is currently under development and not yet ready for use. Please check back later.
+:::
+
 Volumetric synthetic aperture focusing technique (SAFT) for acoustic resolution optoacoustic microscopy and (soon) scanning acoustic microscopy.
 
 This repository contains an implementation of the synthetic aperture focsuing technique purely written in C++ and CUDA. You need a CUDA capable device and Linux installed on your PC to run the fast GPU version of it. A "slow" CPU version is implemented as well. Installation instructions will soon be provided for ArchLinux as well as dataset specifications.
