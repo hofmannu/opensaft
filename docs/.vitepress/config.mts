@@ -40,8 +40,8 @@ export default defineConfig({
     },
 
     markdown: {
-    math: true
-  },
-
+      math: true
+    },
   }
+  base: '/opensaft/',
 })
