@@ -1,8 +1,7 @@
 # opensaft
 
-::: warning
-This project is currently under development and not yet ready for use. Please check back later.
-:::
+> [!WARNING]
+> This project is currently under development and not yet ready for use. Please check back later.
 
 Volumetric synthetic aperture focusing technique (SAFT) for acoustic resolution optoacoustic microscopy and (soon) scanning acoustic microscopy.
 
