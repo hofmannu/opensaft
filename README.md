@@ -79,6 +79,14 @@ Afterwards, to display the documentation run
 npm run docs:dev
 ```
 
+To build the static website, run
+
+```bash
+npm run docs:build
+```
+
+The documentation is published on every merge to `main` to [github pages](https://hofmannu.github.io/opensaft/).
+
 ## Literature
 
 - J. Turner et al.: Improved optoacoustic microscopy through three-dimensional spatial impulse response synthetic aperture focusing technique in Optics Letters 39 (12), pp. 3390 - 3393 (2014), [10.1364/OL.39.003390](https://doi.org/10.1364/OL.39.003390)
