@@ -1,5 +1,7 @@
 # opensaft
 
+![documentation](https://github.com/hofmannu/opensaft/actions/workflows/deploy-documentation.yml/badge.svg)
+
 > [!WARNING]
 > This project is currently under development and not yet ready for use. Please check back later.
 
