@@ -3,13 +3,13 @@
 
 #include "ReconSettings.h"
 #include "Transducer.h"
-#include "volume.h"
+#include "Util/Logger.h"
 #include <chrono> // used to stop time which is required for execution
 #include <cstdio>
 #include <pthread.h>
 #include <thread>
 
-using namespace std;
+#pragma once
 
 namespace opensaft {
 
@@ -21,7 +21,7 @@ struct dcData {
   float* ptr;
 };
 
-class Saft {
+class Saft : LoggingClass {
 
 public:
   // class constructor
