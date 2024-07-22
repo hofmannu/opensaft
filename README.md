@@ -1,15 +1,17 @@
 # opensaft
 
+![documentation](https://github.com/hofmannu/opensaft/actions/workflows/deploy-documentation.yml/badge.svg)
+
 > [!WARNING]
 > This project is currently under development and not yet ready for use. Please check back later.
 
 Volumetric synthetic aperture focusing technique (SAFT) for acoustic resolution optoacoustic microscopy and (soon) scanning acoustic microscopy.
 
-This repository contains an implementation of the synthetic aperture focsuing technique purely written in C++ and CUDA. You need a CUDA capable device and Linux installed on your PC to run the fast GPU version of it. A "slow" CPU version is implemented as well. Installation instructions will soon be provided for ArchLinux as well as dataset specifications.
+This repository contains an implementation of the synthetic aperture focusing technique purely written in C++ and CUDA. You need a CUDA capable device and Linux installed on your PC to run the fast GPU version of it. A "slow" CPU version is implemented as well. Installation instructions will soon be provided for ArchLinux as well as dataset specifications.
 
 ## Features
 
-- Loading files from a stadardized h5 file format
+- Loading files from a standardized `hdf5` file format
 - Defining transducer geometries
 - Supports both ultrasound pulse echo and optoacoustic mode
 - Graphical user interface including preview of preprocessed datasets and reconstructed datasets
@@ -60,7 +62,7 @@ The last command will generate an executable called `main_exp`.
 
 ## Limitations of the underlying model
 
-SAFT induces a strong absorption bias over depth. Absorbance "reconstructed" at different depths can therefore never be compared in a quantitative manner. It also tends to amplify low frequency signals which is the reason why most groups so far reconstruct different freqeucny bands independently (feature requires implementation). In planes very distant from the focus blurring is unavoidable due to the large shape of the reconstruction arcs.
+SAFT induces a strong absorption bias over depth. Absorbance "reconstructed" at different depths can therefore never be compared in a quantitative manner. It also tends to amplify low frequency signals which is the reason why most groups so far reconstruct different frequency bands independently (feature requires implementation). In planes very distant from the focus blurring is unavoidable due to the large shape of the reconstruction arcs.
 
 ## Documentation
 
@@ -97,7 +99,7 @@ The documentation is published on every merge to `main` to [github pages](https:
 
 ### Error while loading files
 
-If there is an error occuring about a version mismatch of the hdf5 library while loading a dataset from a file, it is most likely not the dataset itself that has an outdated format but rather the version of the installed h5 library and the library you linked during compilation (e.g. your PC updated the h5 library in the meantime). Simply recompile the program and the error should be gone.
+If there is an error occurring about a version mismatch of the `hdf5` library while loading a dataset from a file, it is most likely not the dataset itself that has an outdated format but rather the version of the installed `hdf5` library and the library you linked during compilation (e.g. your PC updated the `hdf5` library in the meantime). Simply recompile the program and the error should be gone.
 
 ### Currently not tested against datasets
 

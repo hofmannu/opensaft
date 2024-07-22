@@ -38,7 +38,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: 'https://github.com/hofmannu/opensaft/edit/main/blog/:path',
+      pattern: 'https://github.com/hofmannu/opensaft/edit/main/docs/:path',
     },
 
     markdown: {

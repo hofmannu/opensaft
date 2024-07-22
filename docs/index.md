@@ -6,6 +6,9 @@ hero:
   name: "opensaft"
   text:
   tagline: An open source implementation of the SAFT technique for optoacoustic imaging
+  image:
+    src: /logo.svg
+    alt: opensaft-logo
   actions:
     - theme: alt
       text: Physics
