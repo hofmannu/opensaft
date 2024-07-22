@@ -6,6 +6,7 @@ add_executable(UnitTests
 	TestVectorN.cpp
 	TestVolume.cpp
 	TestTimer.cpp
+	TestSaft.cpp
 	)
 
 target_link_libraries(UnitTests

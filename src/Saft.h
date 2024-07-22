@@ -1,12 +1,9 @@
-
-#pragma once
-
+#include "Memory/UltrasoundSignals.h"
+#include "Memory/Volume.h"
 #include "ReconSettings.h"
 #include "Transducer.h"
 #include "Util/Logger.h"
-#include <chrono> // used to stop time which is required for execution
-#include <cstdio>
-#include <pthread.h>
+#include <optional>
 #include <thread>
 
 #pragma once
@@ -27,46 +24,49 @@ public:
   // class constructor
   Saft();
 
-  Transducer* get_ptrans() { return &trans; };
-  ReconSettings* get_psett() { return &sett; };
-  volume* get_ppreprocData() { return &preprocData; };
-  volume* get_preconData() { return &reconData; };
-  volume* get_pcroppedData() { return &croppedData; };
+  /// runs the actual reconstruction in a separate thread
+  void Launch();
 
-  void recon();
-  std::thread recon2thread();
+  /// waiting for the reconstruction to finish
+  void Wait();
+
+  /// define the input data for the reconstruction
+  void SetInput(UltrasoundSignals&& us) { m_measuredData = std::move(us); }
+
+  std::optional<Volume> GetVolume() const;
 
   void saft_cpu(); // cpu version of the kernel, used for debugging and if no
                    // GPU present
-  void crop();
-  void remove_dc();
 
-  [[nodiscard]] double get_reconTime() const noexcept { return reconTime; };
+  /// substracts the DC component from the signal so that mean(sig) is close to
+  /// 0 for each individual waveform
+  void RemoveDC();
+
+  [[nodiscard]] double get_reconTime() const noexcept { return m_reconTime; };
   [[nodiscard]] double get_tRemain() const noexcept { return tRemain; };
-  std::chrono::time_point<std::chrono::system_clock> get_tStart() const {
-    return tStart;
-  };
 
-  [[nodiscard]] bool get_isRunning() const noexcept { return isRunning; };
-  [[nodiscard]] float get_percDone() const noexcept { return percDone; };
+  [[nodiscard]] bool get_isRunning() const noexcept { return m_isRunning; };
+  [[nodiscard]] float get_percDone() const noexcept { return m_percDone; };
 
 private:
-  Transducer trans;   // settings of the used transducer
-  ReconSettings sett; // reconstruction settings
-  volume preprocData; // preprocessed datasets
-  volume reconData;   // reconstructed datasets
-  volume croppedData; // cropped dataset
+  void Recon();
 
-  int processor_count = 1;
-  bool isRunning =
-      false; // flag indicating if reconstruction is currently running
-  float percDone = 0.0f; // perc of reconstruction done so far [%]
+  /// calculates the response of a single voxel in the output volume
+  float CalculateVoxel(Size3 idx);
 
-  // all we need to time the execution
-  std::chrono::time_point<std::chrono::system_clock> tStart; // start time
-  std::chrono::time_point<std::chrono::system_clock> tEnd;   // end time
-  double tRemain = 0;
-  double reconTime = 0; // time required for last reconstruction
+  std::optional<UltrasoundSignals> m_measuredData; //!< preprocessed datasets
+  std::optional<Volume> m_reconData;               //!< reconstructed datasets
+  std::thread m_reconThread; //!< thread for reconstruction
+
+  std::chrono::time_point<std::chrono::high_resolution_clock>
+      m_start; //!< time of start
+
+  const unsigned int m_processorCount;   //!< total number of cores available
+  std::atomic<bool> m_isRunning = false; //!< is reconstruction running
+  std::atomic<float> m_percDone =
+      0.0f;                 //!< perc of reconstruction done so far [%]
+  double tRemain = 0;       //!< remaining reconstruction time (estimate)
+  double m_reconTime = 0.0; //!< time of last reconstruction
 };
 
 } // namespace opensaft
