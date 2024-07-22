@@ -3,6 +3,8 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "opensaft",
+  base: '/opensaft/',
+  lang: 'en-US',
   description: "Open source SAFT for optoacoustic imaging",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
@@ -43,5 +45,5 @@ export default defineConfig({
       math: true
     },
   }
-  base: '/opensaft/',
+
 })
