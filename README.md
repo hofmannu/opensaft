@@ -1,5 +1,9 @@
 # opensaft
 
+::: warning
+This project is currently under development and not yet ready for use. Please check back later.
+:::
+
 Volumetric synthetic aperture focusing technique (SAFT) for acoustic resolution optoacoustic microscopy and (soon) scanning acoustic microscopy.
 
 This repository contains an implementation of the synthetic aperture focsuing technique purely written in C++ and CUDA. You need a CUDA capable device and Linux installed on your PC to run the fast GPU version of it. A "slow" CPU version is implemented as well. Installation instructions will soon be provided for ArchLinux as well as dataset specifications.
@@ -21,17 +25,18 @@ Required packages:
 - a capable C++ compiler which can be consumed by `CMake`
 - `CUDA` for GPU acceleration (can be disabled, not required)
 - `hdf5` for dataset import and export
+- `libxrandr`, `libxinerama`, `libxcursor`, `libxi`, `libgl1-mesa-dev`: used for GUI framework
 
 Package installation command ArchLinux:
 
 ```bash
-pacman -S hdf5
+pacman -S hdf5 libxrandr libxinerama
 ```
 
 Package installation command Ubuntu:
 
 ```bash
-apt-get install libhdf5-serial-dev
+apt-get install libhdf5-serial-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libgl1-mesa-dev
 ```
 
 Many other dependencies are directly managed through CMake based on `FetchContent`.
@@ -62,11 +67,25 @@ SAFT induces a strong absorption bias over depth. Absorbance "reconstructed" at 
 
 The documentation should be running with `vitepress` and is compiled into a static website that is also published to github pages. All documentation is written in markdown and can be found in the doc folder.
 
-To run the documentation locally, run the following commands:
+If this is the first time that you have a look at the documentation, you need to run
+
+```bash
+npm install
+```
+
+Afterwards, to display the documentation run
 
 ```bash
 npm run docs:dev
 ```
+
+To build the static website, run
+
+```bash
+npm run docs:build
+```
+
+The documentation is published on every merge to `main` to [github pages](https://hofmannu.github.io/opensaft/).
 
 ## Literature
 

@@ -45,7 +45,7 @@ if (NOT imgui_POPULATED)
 	# glfw3_LIBRARIES is empty
 	target_link_libraries(ImGUI_target
 	PRIVATE
-		${glfw3_LIBRARIES}
+		${glfw_LIBRARIES}
 		${OPENGL_LIBRARIES}
 	)
 

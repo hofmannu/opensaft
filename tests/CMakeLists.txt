@@ -2,7 +2,11 @@ find_package(Catch2 REQUIRED)
 
 add_executable(UnitTests
 	TestMain.cpp
+	TestUltrasoundSignals.cpp
 	TestVectorN.cpp
+	TestVolume.cpp
+	TestTimer.cpp
+	TestSaft.cpp
 	)
 
 target_link_libraries(UnitTests

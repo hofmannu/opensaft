@@ -1,13 +1,14 @@
 include(FetchContent)
 
-FetchContent_Declare(backward
-    GIT_REPOSITORY https://github.com/bombela/backward-cpp
-    GIT_TAG master  # or a version tag, such as v1.6
-    SYSTEM          # optional, the Backward include directory will be treated as system directory
+FetchContent_Declare(
+  backward
+  GIT_REPOSITORY https://github.com/bombela/backward-cpp
+  GIT_TAG master  # or a version tag, such as v1.6
+  SYSTEM          # optional, the Backward include directory will be treated as system directory
 )
 
 FetchContent_GetProperties(backward)
-if(NOT backward_POPULATED)
+if (NOT backward_POPULATED)
   FetchContent_Populate(backward)
   add_subdirectory(${backward_SOURCE_DIR} ${backward_BINARY_DIR})
 endif()

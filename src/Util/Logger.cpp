@@ -1,8 +1,20 @@
 #include "Util/Logger.h"
 #include <chrono>
+#include <cxxabi.h>
 #include <iostream>
 
 namespace opensaft {
+
+std::string demangle(const char* name) {
+
+  int status = -4; // some arbitrary value to eliminate the compiler warning
+
+  // enable c++11 by passing the flag -std=c++11 to g++
+  std::unique_ptr<char, void (*)(void*)> res{
+      abi::__cxa_demangle(name, NULL, NULL, &status), std::free};
+
+  return (status == 0) ? res.get() : name;
+}
 
 std::string Logger::GetTimestamp() {
   // get current time
@@ -15,13 +27,19 @@ std::string Logger::GetTimestamp() {
   return ss.str();
 }
 
-void Logger::Log(LogLevel level, const std::string& message) {
+void Logger::Log(LogHeader header, const std::string& message) {
   // log message to console
-  std::cout << GetTimestamp() << " ["
-            << LogLevelNames[static_cast<std::size_t>(level)] << "]" << message
-            << std::endl;
+  std::cout << GetTimestamp() << " ("
+            << LogLevelNames[static_cast<std::size_t>(header.level)] << ")";
+  if (!header.origin.empty())
+    std::cout << " [" << header.origin << "] ";
+  std::cout << message << std::endl;
 }
 
 void Logger::Log(const std::string& message) { Log(LogLevel::Info, message); }
+
+std::string LoggingClass::GetName() const {
+  return demangle(typeid(*this).name());
+}
 
 } // namespace opensaft

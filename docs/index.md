@@ -4,22 +4,26 @@ layout: home
 
 hero:
   name: "opensaft"
-  text: "An open source implementation of the SAFT technique for optoacoustic imaging"
-  tagline: My great project tagline
+  text:
+  tagline: An open source implementation of the SAFT technique for optoacoustic imaging
   actions:
-    - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Physics
+      link: /physics
+    - theme: alt
+      text: Software
+      link: /software
+    - theme: alt
+      text: Hardware
+      link: /hardware
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
----
+  - title: Open source
+    details: This repository is and will remain open source
+  - title: Performant
+    details: The code is optimized for performance using CUDA or can run on multicore CPU if you don't have a GPU at hand
+  - title: Informative
+    details: Through this documentation you can learn more about the technique and how to use it as well as potential hardware implementations
+  - title: Simulation
+    details: We are planning to add a simulation toolbox to generate test datasets.
 

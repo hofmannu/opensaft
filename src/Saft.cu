@@ -1,4 +1,5 @@
 #include "Saft.cuh"
+#include "Saft.h"
 
 namespace opensaft {
 
@@ -100,7 +101,7 @@ SAFT(float* outputVol,        // reconstructed output volume [it, ix, iy]
 // run the kernel but on the CPU
 void Saft::saft_cpu() {
 
-  // declare a few varaibles for improved readabilit
+  // declare a few varaibles for improved readability
   const uint32_t nT = croppedData.get_dim(0);
   const uint32_t nX = croppedData.get_dim(1);
   const uint32_t nY = croppedData.get_dim(2);

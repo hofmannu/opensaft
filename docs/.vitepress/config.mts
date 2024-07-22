@@ -11,20 +11,37 @@ export default defineConfig({
       { text: 'Physics', link: '/physics' },
       { text: 'Software', link: '/software' },
       { text: 'Hardware', link: '/hardware' },
+      { text: 'Literature', link: '/literature' },
     ],
-
-    sidebar: [
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
-        ]
-      }
-    ],
-
+    outline: [2, 4],
     socialLinks: [
       { icon: 'github', link: 'https://github.com/hofmannu/opensaft' }
-    ]
+    ],
+    footer: {
+      message: 'Created by Urs Hofmann',
+      copyright: 'Copyright © 2024 Urs Hofmann'
+    },
+
+    lastUpdated: {
+      text: 'Updated at',
+      formatOptions: {
+        dateStyle: 'full',
+        timeStyle: 'medium'
+      }
+    },
+
+    i18nRouting: true,
+    search: {
+      provider: 'local'
+    },
+
+    editLink: {
+      pattern: 'https://github.com/hofmannu/opensaft/edit/main/blog/:path',
+    },
+
+    markdown: {
+    math: true
+  },
+
   }
 })
