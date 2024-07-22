@@ -30,9 +30,15 @@ jobs:
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
+            # define the standard C++ version to use
+            env:
+              CXX_STANDARD: 20
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+            # define the standard C++ version to use
+            env:
+              CXX_STANDARD: 20
 
     steps:
     - uses: actions/checkout@v4
