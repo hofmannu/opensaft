@@ -74,6 +74,23 @@ public:
     return get_minPos(iDim) + get_res(iDim) * (idx + 0.5f);
   }
 
+  [[nodiscard]] Float3 get_pos(const Size3 idx) const {
+    return {get_pos(idx[0], Dimension::X), get_pos(idx[1], Dimension::Y),
+            get_pos(idx[2], Dimension::Z)};
+  }
+
+  [[nodiscard]] float get_pos(const std::size_t idx,
+                              const Dimension iDim) const {
+    switch (iDim) {
+    case Dimension::X:
+      return get_pos(idx, 0);
+    case Dimension::Y:
+      return get_pos(idx, 1);
+    case Dimension::Z:
+      return get_pos(idx, 2);
+    }
+  }
+
   [[nodiscard]] Float3 get_center() const { return m_center; }
 
   [[nodiscard]] bool operator==(const Volume& other) {
