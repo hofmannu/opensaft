@@ -67,7 +67,13 @@ SAFT induces a strong absorption bias over depth. Absorbance "reconstructed" at 
 
 The documentation should be running with `vitepress` and is compiled into a static website that is also published to github pages. All documentation is written in markdown and can be found in the doc folder.
 
-To run the documentation locally, run the following commands:
+If this is the first time that you have a look at the documentation, you need to run
+
+```bash
+npm install
+```
+
+Afterwards, to display the documentation run
 
 ```bash
 npm run docs:dev
