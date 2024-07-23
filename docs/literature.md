@@ -13,7 +13,10 @@
 
 ## Ultrasound simulation
 
-missing
+- Emmanuel Bossy et al.: Effect of bone cortical thickness on velocity measurements using ultrasonic axial transmission: a 2D simulation study *Journal of the Acoustical Society of America* 2002 [10.1121/1.1480836][bossy2002]
+- Emmanuel Bossy et al.: Three-dimensional simulations of ultrasonic axial transmission velocity measurement on cortical bone models *Journal of the Acoustical Society of America* 2004 [10.1121/1.1689960][bossy2004]
+- Emmanuel Bossy et al.: Three-dimensional simulation of ultrasound propagation through trabecular bone structures measured by synchrotron microtomography *Physics in Medicine and Biology* 2005 [10.1121/1.1689960][bossy2005]
+- Masaya Saeki et al.: FDTD simulation study of ultrasonic wave propagation in human radius model generated from 3D HR-pQCT images *Physics in Medicine* 2020 [10.1016/j.phmed.2020.100029][saeki2020]
 
 ## System descriptions
 
@@ -23,9 +26,13 @@ missing
 
 missing
 
-[liao2004]: https://doi.org/10.1364/OL.29.002506
-[li2006]: https://doi.org/10.1364/OL.31.000474
-[turner2014]: https://doi.org/10.1364/OL.39.003390
-[turner2017]: https://doi.org/10.1364/OPTICA.4.000770
+[bossy2002]: https://doi.org/10.1121/1.1480836
+[bossy2004]: https://doi.org/10.1121/1.1689960
+[bossy2005]: https://doi.org/10.1121/1.1689960
 [hofmann2020]: https://doi.org/10.1364/OL.387630
 [hofmann2022]: https://doi.org/10.1016/j.pacs.2022.100405
+[liao2004]: https://doi.org/10.1364/OL.29.002506
+[li2006]: https://doi.org/10.1364/OL.31.000474
+[saeki2020]: https://doi.org/10.1016/j.phmed.2020.100029
+[turner2014]: https://doi.org/10.1364/OL.39.003390
+[turner2017]: https://doi.org/10.1364/OPTICA.4.000770
