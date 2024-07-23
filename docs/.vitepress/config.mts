@@ -6,6 +6,9 @@ export default defineConfig({
   base: '/opensaft/',
   lang: 'en-US',
   description: "Open source SAFT for optoacoustic imaging",
+  markdown: {
+      math: true
+    },
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
@@ -41,9 +44,7 @@ export default defineConfig({
       pattern: 'https://github.com/hofmannu/opensaft/edit/main/docs/:path',
     },
 
-    markdown: {
-      math: true
-    },
+
   }
 
 })
