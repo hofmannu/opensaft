@@ -17,6 +17,7 @@
 - Emmanuel Bossy et al.: Three-dimensional simulations of ultrasonic axial transmission velocity measurement on cortical bone models *Journal of the Acoustical Society of America* 2004 [10.1121/1.1689960][bossy2004]
 - Emmanuel Bossy et al.: Three-dimensional simulation of ultrasound propagation through trabecular bone structures measured by synchrotron microtomography *Physics in Medicine and Biology* 2005 [10.1121/1.1689960][bossy2005]
 - Masaya Saeki et al.: FDTD simulation study of ultrasonic wave propagation in human radius model generated from 3D HR-pQCT images *Physics in Medicine* 2020 [10.1016/j.phmed.2020.100029][saeki2020]
+- Gianmarco Pinton: A fullwave model of the nonlinear wave equation with multiple relaxations and relaxing perfectly matched layers for high-order numerical finite-difference solutions *arxiv* 2021 [10.48550/arXiv.2106.11476][pinton2021]
 
 ## System descriptions
 
@@ -33,6 +34,7 @@ missing
 [hofmann2022]: https://doi.org/10.1016/j.pacs.2022.100405
 [liao2004]: https://doi.org/10.1364/OL.29.002506
 [li2006]: https://doi.org/10.1364/OL.31.000474
+[pinton2021]: https://doi.org/10.48550/arXiv.2106.11476
 [saeki2020]: https://doi.org/10.1016/j.phmed.2020.100029
 [turner2014]: https://doi.org/10.1364/OL.39.003390
 [turner2017]: https://doi.org/10.1364/OPTICA.4.000770

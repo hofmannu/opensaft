@@ -28,6 +28,8 @@ Acoustic modelling describes the wave propagation from the moment the pressure f
 
 Dispersion of the acoustic wave describes an effect in which different frequency components of the wave show different speeds of sound in the tissue. This leads to a change of shape of the waveform while traveling through the tissue, an effect that is often neglected in optoacoustic imaging.
 
+Especially at high pressures, one cannot assume linearity of the underlying physical equations and other effects such as cavitation could influence the sound propagation. Those are fully neglected by this toolbox.
+
 ## Practial considerations
 
 ### Spatial impulse response
